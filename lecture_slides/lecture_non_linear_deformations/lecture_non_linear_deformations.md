@@ -196,6 +196,7 @@ header-includes: <script src="../stylesheet/leader-line.min.js"></script>
 </div>
 
 # Affine transformation
+<section data-state="slide8">
 <div class="r-vstack">
 <div>
 <span style="font-size:18pt">$\begin{align}\mathbf{y}(\mathbf{x}_{i};\mathbf{A},\mathbf{t}) &= \mathbf{A}\mathbf{x}_{i} + \mathbf{t}\\
@@ -209,10 +210,260 @@ and $\mathbf{t} = \begin{pmatrix}t_{1} \\ t_{2} \\ t_{3} \end{pmatrix}$</span>
 </div>
 <div class="fragment fade-in" data-fragment-index="0">
 <span style="color:blue;font-size:18pt;"> <b> All-important trick:</b></span> <span style="font-size:18pt"> look at each coordinate $k$ separately!</span>
-<span style="font-size:18pt">$\begin{align}\\
+<div id="coordinate_eq"><span style="font-size:18pt">$\begin{align}\\
 y^k(\mathbf{x}_i;\mathbf{A},\mathbf{t}) &= x^k_i + \mathbf{q}(\mathbf{x}_i)^T\mathbf{w}^k\\\\
 \mathbf{q}(\mathbf{x}_i) &= (1,x^1_i,x^2_i,x^3_i)^T\\\\
 \mathbf{w}^k &= (t_k, a_{k1}, -1, a_{k2}, a_{k3})^T
-\end{align}$</span>
+\end{align}$</span></div>
+<div style="border:solid gray 3pt;padding:0px; transform:translate(450%, -80%); width:150px; height:40px;text-align:center;" id="k1"> <span style="font-size:18pt;line-height:0">(for $k=1$)</span></div>
 </div>
+</div>
+</section>
+
+# Affine transformation
+<section data-state="slide9">
+<div class="r-vstack">
+<p align="left" text-align="left">In matrix form: (all $N$ input points simultaneously)</p>
+<br>
+<p align="left">Define</p>
+$\mathbf{x}^{k} = \begin{pmatrix}x_{1}^{k}\\x_{2}^{k}\\\vdots\\x_{N}^{k}\end{pmatrix} \quad \mathbf{y}^{k} = \begin{pmatrix}y_{1}^{k}\\y_{2}^{k}\\\vdots\\y_{N}^{k}\end{pmatrix} \quad
+\mathbf{Q\prime} = \begin{pmatrix}1 & x_{1}^{1} & x_{1}^{2} & x_{1}^{3}\\ 1 & x_{2}^{1} & x_{2}^{2} & x_{2}^{3}\\\vdots & \vdots & \vdots &\vdots \\ 1 & x_{N}^{1} & x_{N}^{2} & x_{N}^{3}\end{pmatrix}$
+<br>
+<br>
+<div class="r-hstack">
+<div style="font-size:96pt;transform:translate(-50%,0%)">&#x21e8;</div>
+<span style="transform:translate(50%,0%)">$\mathbf{y}^{k} = \mathbf{x}^{k} + \mathbf{Q\prime}\mathbf{w}_{k}$</span>
+</div>
+</div>
+</section>
+
+# Affine transformation
+<section data-state="slide10">
+<div class="r-vstack">
+<div class="r-stack" style="transform:translate(0%,150%)">
+<svg width="200" height="200" position="fixed">
+  <use href="#trans_grid" />
+</svg>
+<svg width="200" height="200" transform="matrix(1 0 0 1 0 0)" id="moving_grid">
+  <use href="#trans_grid"/>
+</svg>
+</div>
+<div class="r-stack" style="transform:translate(0%,400%)">
+<div class="fragment fade-out" data-fragment-index="0"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}0\\0 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="0"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}240\\0\\0\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}240\\0 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="1"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}240\\0.3\\0\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1.3 & 0\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}240\\0 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="2"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}240\\0\\0.2\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1 & 0.2\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}240\\0 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="3"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}240\\0.3\\0.2\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1.3 & 0.2\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}240\\0 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="4"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}240\\0\\0\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}0\\240 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in-then-out" data-fragment-index="5"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}0\\0\\0\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}240\\0.2\\-0.3\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1 & 0\\0.2 & 0.7\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}0\\240 \end{pmatrix}$
+</span></div>
+<div class="fragment fade-in" data-fragment-index="6"><span style="font-size:16pt">
+$\mathbf{y}^{1}=\mathbf{x}^{1} + \mathbf{Q\prime}\begin{pmatrix}240\\0.1\\0.2\end{pmatrix},\quad
+\mathbf{y}^{2}=\mathbf{x}^{2} + \mathbf{Q\prime}\begin{pmatrix}240\\0.2\\-0.3\end{pmatrix},\quad
+\mathbf{A} = \begin{pmatrix}1.1 & 0.2\\0.2 & 0.7\end{pmatrix}, \quad \mathbf{t} = \begin{pmatrix}240\\240 \end{pmatrix}$
+</span></div>
+</div>
+</div>
+</section>
+
+# Non-linear transformations
+<div class="r-vstack">
+<p>Just use basis functions that depend <b><u>non-linearly</u></b> on $\mathbf{x}$ </p>
+<br>
+<p>
+$\mathbf{y}^{k}=\mathbf{x}^{k} + \mathbf{Q\prime}\mathbf{w}_{k}$
+</p>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0"><p>
+$\mathbf{Q\prime} = \begin{pmatrix} 1 & x_{1}^{1} & x_{1}^{2} & x_{1}^{3}\\
+                        1 & x_{2}^{1} & x_{2}^{2} & x_{2}^{3}\\
+                        \vdots & \vdots & \vdots & \vdots \\
+                        1 & x_{N}^{1} & x_{N}^{2} & x_{N}^{3}\end{pmatrix}$
+</p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="0"><p>
+$\mathbf{Q\prime} = \xcancel{\begin{pmatrix} 1 & x_{1}^{1} & x_{1}^{2} & x_{1}^{3}\\
+                        1 & x_{2}^{1} & x_{2}^{2} & x_{2}^{3}\\
+                        \vdots & \vdots & \vdots & \vdots \\
+                        1 & x_{N}^{1} & x_{N}^{2} & x_{N}^{3}\end{pmatrix}}$
+</p>
+</div>
+<div class="fragment fade-in" data-fragment-index="1"><p>
+$\mathbf{Q\prime} = \begin{pmatrix} \phi_{1}(\mathbf{x}_{1}) & \phi_{2}(\mathbf{x}_{1}) &  \cdots &  \phi_{M}(\mathbf{x}_{1})\\
+                        \phi_{1}(\mathbf{x}_{2}) & \phi_{2}(\mathbf{x}_{2}) & \cdots & \phi_{M}(\mathbf{x}_{2})\\
+                        \vdots & \vdots & \ddots & \vdots \\
+                     \phi_{1}(\mathbf{x}_{N})& \phi_{2}(\mathbf{x}_{N}) & \cdots & \phi_{M}(\mathbf{x}_{N})\end{pmatrix}$
+</p>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="1">
+<p> 
+Non-linear in input variables, but still linear in parameters!
+</p>
+</div>
+</div>
+
+# Non-linear transformations
+<img src="./media/non-linear_grid.png" width="600">
+
+# Non-linear transformations
+<div class="r-hstack">
+<p>$\phi_m(\mathbf{x})$</p>
+<img src="./media/non-linear_bfs.png" width="600">
+</div>
+
+# Non-linear transformations
+<img src="./media/non-linear_grid2.png" height="600">
+
+# Non-linear basis functions used in exercise this week
+<div class="r-hstack">
+<div class="r-vstack">
+<img src="./media/1d_spline.png" height="300">
+<div style="border:solid gray 3pt;padding:5px;">1-D: B-spline</div>
+</div>
+<div style="font-size:96pt;">&#x21e8;</div>
+<div class="r-vstack">
+<img src="./media/2d_spline.png" height="450">
+<div style="border:solid gray 3pt;padding:5px;">2-D: "tensor B-spline"</div>
+</div>
+</div>
+
+# Non-linear basis functions used in exercise this week
+<div class="r-vstack">
+<div class="r-hstack" style="transform:translate(0%,-20%)">
+<img src="./media/1d_hist.png" height="230" style="transform:translate(-5%,0%)">
+<p style="font-size:22pt">$\cdot$</p>
+<img src="./media/1d_hist2.png" height="230" style="transform:translate(5%,0%)">
+<p style="font-size:22pt;transform:translate(80%,0%)">$=$</p>
+<img src="./media/2d_hist.png" height="350" style="transform:translate(5%,0%)">
+</div>
+<div style="transform:translate(0%,-50%)"><span style="font-size:16pt">
+$\begin{pmatrix} 1 \\ 8 \\ 24 \\ 33 \\ 24 \\ 8 \\ 1 \end{pmatrix} \cdot \begin{pmatrix}1 & 8 & 24 & 33 & 24 & 8 & 1\end{pmatrix}  = \begin{pmatrix}
+1 \cdot 1 & 1 \cdot 8 & 1 \cdot 24 & 1 \cdot 33 & 1 \cdot 24 & 1 \cdot 8 & 1 \cdot 1\\
+8 \cdot 1 & 8 \cdot 8 & 8 \cdot 24 & 8 \cdot 33 & 8 \cdot 24 & 8 \cdot 8 & 8 \cdot 1\\
+24 \cdot 1 & 24 \cdot 8 & 24 \cdot 24 & 24 \cdot 33 & 24 \cdot 24 & 24 \cdot 8 & 24 \cdot 1\\
+33 \cdot 1 & 33 \cdot 8 & 33 \cdot 24 & 33 \cdot 33 & 33 \cdot 24 & 33 \cdot 8 & 33 \cdot 1\\
+24 \cdot 1 & 24 \cdot 8 & 24 \cdot 24 & 24 \cdot 33 & 24 \cdot 24 & 24 \cdot 8 & 24 \cdot 1\\
+8 \cdot 1 & 8 \cdot 8 & 8 \cdot 24 & 8 \cdot 33 & 8 \cdot 24 & 8 \cdot 8 & 8 \cdot 1\\
+1 \cdot 1 & 1 \cdot 8 & 1 \cdot 24 & 1 \cdot 33 & 1 \cdot 24 & 1 \cdot 8 & 1 \cdot 1\\
+\end{pmatrix}$
+</span>
+</div>
+</div>
+
+# Non-linear basis functions used in exercise this week
+<p>Warp field: need one for each coordinate! </p>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<img src="./media/2d_bfs.png" height="400" style="transform:translate(0%,0%)">
+<p style="transform:translate(0%, -80%)"><span style="font-size:16pt">$\mathbf{y}^1 = \mathbf{x}^1 + \mathbf{Q\prime}\mathbf{w}_1$</span></p>
+</div>
+<div class="r-vstack" style="transform:translate(20%,0%)">
+<img src="./media/2d_bfs.png" height="400" style="transform:translate(0%,0%)">
+<p style="transform:translate(0%, -80%)"><span style="font-size:16pt">$\mathbf{y}^2 = \mathbf{x}^2 + \mathbf{Q\prime}\mathbf{w}_2$</span></p>
+</div>
+</div>
+
+# Elements in image registration
+- Geometrical transformation: $\quad \mathbf{y}(\mathbf{x};\mathbf{w}): \mathbb{R}^{2} \rightarrow \mathbb{R}^{2}$ or $\mathbb{R}^{3} \rightarrow \mathbb{R}^{3}$
+- Similarity measure: $\quad\mathcal{D}(\mathbf{w})$
+- Regularization: $\quad\mathcal{S}(\mathbf{w})$
+- Optimization algorith: <span class="fragment highlight-blue" data-fragment-index="0">$\quad\mathcal{J}(\mathbf{w}) = \mathcal{D}(\mathbf{w}) + \alpha\mathcal{S}(\mathbf{w})$</span>
+
+# Optimization of image registration
+<p> Optimize sum of squared differences </p>
+<p> $\mathcal{D}_{\text{SSD}}(\mathbf{w}) = \frac{1}{2}\sum_{i\in\Omega}(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})) - \mathcal{R}(\mathbf{x}_i))^2$ </p>
+<br>
+<p><span style="color:blue"> New notation: </span> all coordinates simultaneously by stacking them </p>
+<p> <span style="font-size:18pt">$\mathbf{\tilde{x}} = \begin{pmatrix} \mathbf{x}^1\\\mathbf{x}^2\\\mathbf{x}^3\end{pmatrix} \quad \mathbf{\tilde{y}} = \begin{pmatrix} \mathbf{y}^1\\\mathbf{y}^2\\\mathbf{y}^3\end{pmatrix} \quad \mathbf{\tilde{w}} = \begin{pmatrix} \mathbf{w}^1\\\mathbf{w}^2\\\mathbf{w}^3\end{pmatrix}$ </span></p>
+<div class="r-hstack">
+<div style="font-size:96pt;transform:translate(-20%,0%)">&#x21e8;</div>
+<span style="font-size:18pt;transform:translate(20%,0%)">$\mathbf{\tilde{y}} = \mathbf{\tilde{x}} + \begin{pmatrix}\mathbf{Q\prime} & 0 & 0\\ 0 & \mathbf{Q\prime} & 0\\ 0 & 0 & \mathbf{Q\prime} \end{pmatrix}\mathbf{w} = \mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w}$ </span>
+</div>
+
+# Optimization of image registration
+<div style="align:left; text-align:left"> More new notation: </div>
+<br>
+<div style="align:center">$\mathcal{R}(\mathbf{\tilde{x}})$: vector of all reference image values <br>
+$\mathcal{T}(\mathbf{\tilde{y}})$: vector of corresponding template image values </div>
+<br>
+<div class="r-hstack">
+<div style="font-size:96pt;transform:translate(-30%,0%)">&#x21e8;</div>
+<span style="transform:translate(30%,0%)">$\begin{align}\mathcal{D}_{\text{SSD}}(\mathbf{w}) &= \frac{1}{2}\sum_{i\in\Omega}(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})) - \mathcal{R}(\mathbf{x}_i))^2\\
+&= \frac{1}{2}\|\mathcal{T}(\mathbf{\tilde{y}}) - \mathcal{R}(\mathbf{\tilde{x}})\|^2\end{align}$ </span>
+</div>
+
+# Linearization
+<p>For a small change $\mathbf{s}$ to the current parameter estimate $\mathbf{w}$ we have (linearization): </p> 
+<p>$\begin{align}\mathcal{D}_{\text{SSD}}(\mathbf{w} + \mathbf{s}) &= \frac{1}{2}\|\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}(\mathbf{w} + \mathbf{s})) - \mathcal{R}(\mathbf{\tilde{x}})\|^2\\ &\approx  \frac{1}{2}\|\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}(\mathbf{w})) + \nabla\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w})\mathbf{Q}\mathbf{s} - \mathcal{R}(\mathbf{\tilde{x}})\|^2 \end{align}$ </p>
+<br>
+<p>with $\nabla\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w}) = (\mathbf{G}_{1}\quad\mathbf{G}_{2}\quad\mathbf{G}_{3})$ </p>
+<p>and $\mathbf{G}_k = \text{diag}(\left.\frac{\partial\mathcal{T}}{\partial y^{k}}\right|_{\mathbf{y}_1}, \dots, \left.\frac{\partial\mathcal{T}}{\partial y^{k}}\right|_{\mathbf{y}_N})$ </p>
+
+# Linearization (baby version)
+<p>1D, only 1 pixel, only translation ($y=x+t$) </p>
+<div class="r-hstack">
+<div class="r-stack">
+<div><img src="./media/linearization1.png" height="400"></div>
+<div><img src="./media/linearization2.png" height="400" class="fragment fade-in" data-fragment-index="0" style="transform:translate(0%, -23%)"></div>
+</div>
+<div><img src="./media/linearization3.png" height="400" class="fragment fade-in" data-fragment-index="0"></div>
+</div>
+
+# Optimization of image registration
+<div style="float:left;align:left;text-align:left">
+<p><span style="color:blue;">Gauss-Newton optimization:</span> search for change $\mathbf{s}$ that minimizes </p>
+<span>$\mathcal{D}_{\text{SSD}}(\mathbf{w} + \mathbf{s}) \approx \frac{1}{2}\|\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w}) + \nabla\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w})\mathbf{Q}\mathbf{s} - \mathcal{R}(\mathbf{\tilde{x}}) \|^2$</span>
+</div>
+<div class="r-vstack">
+<div class="fragment fade-in" data-fragment-index="0">
+<p style="transform:translate(-30%, 0%)"> Is standard least-squares fit!</p>
+<div class="r-hstack">
+<div style="font-size:128pt;transform:translate(-20%,-10%)" class="fragment fade-in" data-fragment-index="2">&#x21ba;</div>
+<div class="r-vstack">
+<div style="float:right;align:right;text-align:right">
+<span> solve $(\mathbf{J}^{T}\mathbf{J})\mathbf{s} = \mathbf{J}^T(\mathcal{R}(\mathbf{\tilde{x}}) - \mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w}))$</span>
+<br>
+<span> where $\mathbf{J} = \nabla\mathcal{T}(\mathbf{\tilde{x}} + \mathbf{Q}\mathbf{w})\mathbf{Q}$</span>
+</div>
+<div class="fragment fade-in" data-fragment-index="1">
+<p>When done, update current parameter estimate $\mathbf{w}\coloneqq\mathbf{w} + \mathbf{s}$</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+# Optimization of image registration
+<div class="r-hstack">
+<img src="./media/example_reg1.png" height="400">
+<img src="./media/example_reg2.png" height="400">
+<img src="./media/example_reg3.png" height="400">
 </div>

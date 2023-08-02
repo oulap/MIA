@@ -35,6 +35,13 @@ var arrow2Slide6 = new LeaderLine(
   {color: 'gray', path:'straight', hide:'true'}
 );
 
+
+var arrow1Slide8= new LeaderLine(
+  LeaderLine.areaAnchor(document.getElementById('coordinate_eq'), 'circle',{x: '59%', y: '85%', width:'5%', height:'15%'}),
+  LeaderLine.pointAnchor(document.getElementById('k1'), {x: '50%', y: '100%'}),
+  {color: 'gray', hide:'true', startPlug:'arrow1', startSocket:'bottom', endSocket:'bottom'}
+);
+
 var currentSlide
 Reveal.on( 'slidechanged', event => {
 
@@ -138,6 +145,29 @@ Reveal.on( 'slidechanged', event => {
       arrow2Slide6.show();
   }
 
+  if(event.previousSlide.getAttribute('data-state') == 'slide8'){
+
+      arrow1Slide8.hide('none');
+  }
+
+
+  if(event.currentSlide.getAttribute('data-state') == 'slide8'){
+
+
+      currentSlide = '8'
+      arrow1Slide8.position();
+      Reveal.on( 'fragmentshown', event => {
+        if(currentSlide == '8' && event.fragment.getAttribute('data-fragment-index') == 0){
+          arrow1Slide8.show();
+        }
+      });
+  }
+
+  if(event.currentSlide.getAttribute('data-state') == 'slide9'){
+    currentSlide = '9';
+
+  }
+
   if(event.previousSlide.getAttribute('data-state') == 'slide14'){
 
       line1Slide14.hide('none');
@@ -158,6 +188,61 @@ Reveal.on( 'slidechanged', event => {
       });
   }
 
+
+  if(event.previousSlide.getAttribute('data-state') == 'slide10'){
+
+    var moving_grid = document.getElementById('moving_grid')
+    moving_grid.setAttribute('transform','matrix(1 0 0 1 0 0)');
+  }
+  if(event.currentSlide.getAttribute('data-state') == 'slide10'){
+
+    currentSlide = '10';
+    var moving_grid = document.getElementById('moving_grid')
+
+      Reveal.on( 'fragmentshown', event => {
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+          moving_grid.setAttribute('transform','matrix(1 0 0 1 240 0)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 1){
+
+          moving_grid.setAttribute('transform','matrix(1.3 0 0 1 240 0)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 2){
+
+          moving_grid.setAttribute('transform','matrix(1 0 -0.2 1 240 0)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 3){
+
+          moving_grid.setAttribute('transform','matrix(1.3 0 -0.2 1 240 0)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 4){
+
+          moving_grid.setAttribute('transform','matrix(1 0 0 1 0 -240)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 5){
+
+          moving_grid.setAttribute('transform','matrix(1 -0.2 0 0.7 0 -240)');
+
+        }
+
+        if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 6){
+
+          moving_grid.setAttribute('transform','matrix(1.1 -0.2 -0.2 0.7 240 -240)');
+
+        }
+      });
+  }
 
 });
 
@@ -246,6 +331,8 @@ skew_slider.oninput = function() {
 </defs>
 <use href="#trans_grid"/>
 </svg>
+
+
 
 <svg style="display: none" version="2.0">
 <defs>
