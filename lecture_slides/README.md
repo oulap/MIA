@@ -7,10 +7,10 @@ Each set of slides are in their own folder, e.g., *lecture_intensity_based_regis
 Additionally there are two important files inside the stylesheet/ folder. [style.css](stylesheet/style.css) defines font size, colors, etc. for the presentations, and [leader-line.min.js](stylesheet/leader-line.min.js) is used for setting up arrows and lines. The arrow plotting utilities are taken from [here](https://github.com/anseki/leader-line). 
 
 To compile the markdown file call:
-´pandoc -t revealjs -s lecture_non_linear_deformations.md -o lecture_non_linear_deformations.html -c ../stylesheet/style.css -A utils.js --mathjax´
+`pandoc -t revealjs -s lecture_non_linear_deformations.md -o lecture_non_linear_deformations.html -c ../stylesheet/style.css -A utils.js --mathjax`
 
 If you want to compile a standalone website (the you can for example put on a stick and present from there) call:
-´pandoc -t revealjs -s lecture_non_linear_deformations.md -o lecture_non_linear_deformations_standalone.html -c ../stylesheet/style.css -A utils.js --mathjax --embed-resources --standalone´
+`pandoc -t revealjs -s lecture_non_linear_deformations.md -o lecture_non_linear_deformations_standalone.html -c ../stylesheet/style.css -A utils.js --mathjax --embed-resources --standalone`
 
 For examples of how to create slides in revealjs see example presentation [here](https://revealjs.com/?demo) and the source [here](https://github.com/hakimel/reveal.js/blob/master/demo.html)
 
