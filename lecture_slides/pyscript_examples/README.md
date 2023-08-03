@@ -1,4 +1,4 @@
-# Running python inside the presentations (or html)
+# Running python inside a presentation (or html)
 
 [pyscript](https://pyscript.net/) is a fairly new project that allows you to run python inside an html. It's still in alpha, but might provide useful in the future. Also this is a bit easier when your familiar with python but not as familiar with javascript. The downside (at least at the moment) is that it takes a while to fire up the virtual environment and install the necessary packages when the html is opened. Also not all python packages are supported, see list [here](https://pyodide.org/en/stable/usage/packages-in-pyodide.html).
 
