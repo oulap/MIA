@@ -1,5 +1,5 @@
 ---
-title: Intensity-based registration
+title: Non-linear deformations
 author: Koen Van Leemput
 revealOptions:
 transition: 'none'
