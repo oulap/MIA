@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Koen Van Leemput">
+  <title>Neural Networks</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="../stylesheet/style.css"/>
+  <script src="../stylesheet/leader-line.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-state="title-slide">
+  <h1 class="title">Neural Networks</h1>
+  <p class="author">Koen Van Leemput</p>
+</section>
+
+<section id="course-structure" class="slide level1">
+<h1>Course structure</h1>
+<section data-state="slide1">
+<div class="r-vstack">
+<div class="r-vstack">
+<img id="img0" width="300" src="./media/course-structure-0.png">
+<p style="width:100; height:20px;font-size:18px">
+“Fitting functions”
+</p>
+</div>
+<div class="r-hstack" data-postion="absolute">
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-1.png" id="img1" class="fragment semi-fade-out" data-fragment-index="0">
+<p style="width:100; height:20px;font-size:18px" class="fragment semi-fade-out" data-fragment-index="0">
+“Registration”
+</p>
+</div>
+<div style="width: 200px; height: 200px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-2.png" id="img2">
+<p style="width:100; height:20px;font-size:18px">
+“Segmentation”
+</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="remeber-regression" class="slide level1">
+<h1>Remeber regression?</h1>
+<section data-state="slide2">
+<ul>
+<li><span style="font-size:0.6em; line-height:0%"> <span
+class="math inline">\(f(x) = \sum_{m=1}^M
+\beta_{m}\phi_{m}(\mathbf{x})\)</span> </span></li>
+<li>Training set <span style="font-size:0.6em; line-height:0%"> <span
+class="math inline">\(\{\mathbf{x}_{i}, y_{i}\}_{i=1}^{N}\)</span>
+</span>
+<ul>
+<li>Input vector: <span style="font-size:0.6em; line-height:0%"> <span
+class="math inline">\(\mathbf{x}_{i} = (x_{i1}, x_{i2}, \dots,
+x_{ip})^{T}\)</span> </span></li>
+<li>Corresponding ouput: <span class="math inline">\(y_{i}\)</span></li>
+</ul></li>
+<li>Estimate parameters <span class="math inline">\(\boldsymbol{\theta}
+= (\beta_{1}, \dots, \beta_{M})^{T}\)</span> <br><br> by minimizing the
+cost <span class="math inline">\(\sum_{i=1}^N (y_{i} -
+f(\mathbf{x}_{i}))^2\)</span></li>
+</ul>
+</section>
+</section>
+<section id="remember-regression" class="slide level1">
+<h1>Remember regression?</h1>
+<section data-state="slide3">
+<div class="r-vstack">
+<p>
+Example: p=1 and M=5 cosines
+</p>
+<div class="r-hstack">
+<div class="r-vstack">
+<p><span
+style="margin:auto; display:table;font-size:0.6em; line-height:0%">
+<span class="math inline">\(\phi_m(\mathbf{x})\)</span> </span>
+<img height="300" src="./media/remember-regressionexample-p1-and-m5-cosines-2.png">
+<span
+style="margin:auto; display:table;font-size:0.6em; line-height:0%"><span
+class="math inline">\(\mathbf{x}\)</span> </span></p>
+</div>
+<div style="width: 200px; height: 20px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<p><span
+style="margin:auto; display:table;font-size:0.6em; line-height:0%">
+<span class="math inline">\(f(\mathbf{x}) = \sum_{m=1}^{M}
+\beta_{m}\phi_{m}(\mathbf{x})\)</span> </span>
+<img height="300" src="./media/remember-regressionexample-p1-and-m5-cosines-1.png">
+<span style="margin:auto; display:table;font-size:0.6em;line-height:0%">
+<span class="math inline">\(\mathbf{x}\)</span> </span></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="remeber-gaussian-mixture-model" class="slide level1">
+<h1>Remeber Gaussian mixture model?</h1>
+<section data-state="slide4">
+<div class="r-vstack">
+<div class="r-hstack">
+<img height="170" src="./media/remember-gaussian-mixture-modelposterior-using-bayes-rule-3.png">
+<div style="width: 50px; height: 20px; border: 0px solid black;">
+
+</div>
+<img height="170" src="./media/remember-gaussian-mixture-modelposterior-using-bayes-rule-2.png">
+<div style="width: 50px; height: 20px; border: 0px solid black;">
+
+</div>
+<p><img height="170" src="./media/remember-gaussian-mixture-modelposterior-using-bayes-rule-1.png"></p>
+</div>
+<div class="r-hstack">
+<div id="blue_box" class="fragment" data-fragment-index="1"
+style="height:170px;width:220px;border:3px solid #0000FF;">
+<p style="color:#0000FF;font-size:14pt;margin-top:0;margin-bottom:.5">
+This lecture: can we get a “classifier”:
+</p>
+<p>
+<span
+style="margin:auto; display:table;font-size:0.6em; line-height:0%">
+<span class="math inline">\(p(l|d,\boldsymbol{\theta})\)</span> </span>
+</p>
+<p style="color:#0000FF;font-size:14pt;margin-top:0;margin-bottom:.5">
+directly <u><b> without a model?</b></u>
+</p>
+</div>
+<div style="width: 50px; height: 20px; border: 0px solid black;">
+
+</div>
+<img height="200" src="./media/remember-gaussian-mixture-modelposterior-using-bayes-rule-0.png" id="img_gmm">
+<div style="width: 50px; height: 20px; border: 0px solid black;">
+
+</div>
+<div id="green_box" class="fragment" data-fragment-index="0"
+style="height:170px;width:220px;border:3px solid #00FF00;">
+<p style="color:#00FF00;font-size:14pt;margin-top:0;margin-bottom:10pt">
+New notation/terminology:
+</p>
+<p style="color:#00FF00;font-size:14pt;margin-top:0;margin-bottom:1pt">
+“Training samples”
+</p>
+<p style="font-size:14pt;margin-top:0;margin-bottom:1pt">
+<span style="color:#0000FF"> “y=1” </span> <span style="color:#00FF00;">
+if l=1 </span>
+</p>
+<p style="font-size:14pt;margin-top:0;margin-bottom:1pt">
+<span style="color:#FF0000;"> “y=0” </span> <span
+style="color:#00FF00;"> if l=2 </span>
+</p>
+</div>
+</div>
+<p style="font-size:18pt">
+Posterior using Bayes’ rule: <span
+class="math inline">\(p(l=k|d,\boldsymbol{\theta}) =
+\frac{\mathcal{N}(d||\mu_{k},
+\sigma_{k}^{2})\pi_{k}}{\sum_{k^{\prime}}\mathcal{N}(d|\mu_{k^{\prime}},
+\sigma_{k^{\prime}}^{2})\pi_{k^{\prime}}}\)</span>
+</p>
+</div>
+</section>
+</section>
+<section id="logistic-regression" class="slide level1">
+<h1>Logistic regression</h1>
+<section data-state="slide5">
+<div class="r-vstack">
+<p>
+Logistic function as a “squashing” function
+</p>
+<img width="400" src="./media/logistic-regressionlogistic-function-as-a-squashing-function-1.png">
+<p>
+<span style="margin:auto; display:table;font-size:1em; line-height:0%">
+<span class="math inline">\(\sigma(a) = \frac{1}{1+\exp(-a)}\)</span>
+</span>
+</p>
+</div>
+</section>
+</section>
+<section id="logistic-regression-1" class="slide level1">
+<h1>Logistic regression</h1>
+<section data-state="slide6">
+<div class="r-vstack">
+<div class="r-hstack">
+<div class="r-vstack">
+<img width="200" src="./media/logistic-regressionwhereof-course-3.png" id="slide6_img1">
+<p style="font-size:12pt;margin-top:0;margin-bottom:0">
+<span
+class="math inline">\(a=\sum_{m=1}^{M}\beta_m\phi_m(\mathbf{x})\)</span>
+</p>
+</div>
+<div style="width: 50px; height: 20px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<div style="width: 50px; height: 50px; border: 0px solid black;">
+
+</div>
+<img width="200" src="./media/logistic-regressionlogistic-function-as-a-squashing-function-1.png" id="slide6_img2">
+<p>
+<span style="font-size:12pt;margin-top:0;margin-bottom:0;"> <span
+class="math inline">\(\sigma(a) = \frac{1}{1+\exp(-a)}\)</span> </span>
+</p>
+</div>
+<div style="width: 50px; height: 10px; border: 0px solid black;">
+
+</div>
+<p><img width="200" src="./media/logistic-regressionwhereof-course-4.png" id="slide6_img3"></p>
+</div>
+<div style="width: 50px; height: 50px; border: 0px solid black;">
+
+</div>
+<ul>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+<span class="math inline">\(p(y=1|\mathbf{x},
+\boldsymbol{\theta})\)</span> where <span
+class="math inline">\(f(\mathbf{x}) =
+\sigma\left(\sum_{m=1}^{M}\beta_{m}\phi_{m}(\mathbf{x})\right)\)</span>
+</span></li>
+<li><span
+style="margin-top:0;margin-bottom:0; display:table;font-size:12pt; line-height:0%">
+Of course: <span class="math inline">\(p(y=0|\mathbf{x},
+\boldsymbol{\theta}) = 1 - p(y=1|\mathbf{x}, \boldsymbol{\theta}) = 1 -
+f(\mathbf{x})\)</span> </span></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="voxel-based-classifier" class="slide level1">
+<h1>Voxel-based classifier</h1>
+<section data-state="slide7">
+<div class="r-hstack">
+<div class="column" style="width:80%;">
+<ul>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+Training data <span class="math inline">\(\{\mathbf{x}_{i},
+y_{i}\}_{i=1}^{N}\)</span> with <span class="math inline">\(\mathbf{x}_i
+= d_i\)</span> (i.e., <span class="math inline">\(p=1\)</span>) and
+<span class="math inline">\(y_i\in{0,1}\)</span> </span></li>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+Estimate paremeters <span class="math inline">\(\boldsymbol{\theta} =
+(\beta_{1},\dots,\beta_{M})^T\)</span> by maximizing the likelihood
+function <span class="math inline">\(\prod_{i}^N p(y_i|\mathbf{x}_i,
+\boldsymbol{\theta})\)</span> </span></li>
+</ul>
+</div>
+<p><img width="200" src="./media/voxel-based-classifier-0.png"></p>
+</div>
+<div class="r-hstack">
+<img height="300" src="./media/voxel-based-classifier-1.png">
+<div style="width: 70px; height: 50px; border: 0px solid black;">
+
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/scenario1_training_iteration0001_activation.png" height="300" class="fragment fade-in-then-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/scenario1_training_iteration0101_activation.png" height="300" class="fragment fade-in-then-out" data-fragment-index="1">
+</div>
+<div>
+<img src="./media/scenario1_training_iteration4901_activation.png" height="300" class="fragment fade-in" data-fragment-index="2">
+</div>
+</div>
+<div style="width: 70px; height: 50px; border: 0px solid black;">
+
+</div>
+<div class="r-stack">
+<div>
+<img class="fragment fade-out" data-fragment-index="0" src="./media/scenario1_training_initialization_scatter.png" height="300">
+</div>
+<div>
+<img class="fragment fade-in-then-out" data-fragment-index="0" src="./media/scenario1_training_iteration0001_posterior.png" height="300">
+</div>
+<div>
+<img class="fragment fade-in-then-out" data-fragment-index="1" src="./media/scenario1_training_iteration0101_posterior.png" height="300">
+</div>
+<div>
+<img class="fragment fade-in" data-fragment-index="2" src="./media/scenario1_training_iteration4901_posterior.png" height="300">
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="voxel-based-classifier-1" class="slide level1">
+<h1>Voxel-based classifier</h1>
+<section data-state="slide8">
+<div class="r-hstack">
+<div class="column" style="width:80%;">
+<ul>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+Once trained keep the classifier: <span class="math inline">\(p(l=1 | d,
+\boldsymbol{\hat{\theta}})\)</span> </span></li>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+Simply apply it to new data </span></li>
+</ul>
+</div>
+<p><img width="200" src="./media/scenario1_training_iteration4901_posterior.png"></p>
+</div>
+<div class="r-hstack">
+<figure>
+<img src="./media/voxel-based-classifieronce-trained-keep-the-classifier-simply-apply-it-to-new-data-2.png" height="300" style="display:block; margin:0;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+<span class="math inline">\(\hspace{2mm}\)</span> </span>
+</figcaption>
+</figure>
+<figure>
+<img src="./media/voxel-based-classifieronce-trained-keep-the-classifier-simply-apply-it-to-new-data-3.png" height="300" style="display:block; margin:0;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+<span class="math inline">\(p(l | d, \boldsymbol{\hat{\theta}})\)</span>
+</span>
+</figcaption>
+</figure>
+<figure>
+<img src="./media/voxel-based-classifieronce-trained-keep-the-classifier-simply-apply-it-to-new-data-1.png" height="300" style="display:block; margin:0;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%"><span
+class="math inline">\(p(l | d, \boldsymbol{\hat{\theta}}) &gt;
+0.5\)</span></span>
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="optimization-algorithm-for-training" class="slide level1">
+<h1>Optimization algorithm for training</h1>
+<section data-state="slide9">
+<ul>
+<li><span
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+Maximizing the likelihood function <span
+class="math inline">\(\prod_{i=1}^{N}p(y_{i}|\mathbf{x}_{i},\boldsymbol{\theta})\)</span>
+is equivalent to minimizing </span> <br> <span
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+<span class="math display">\[\begin{align} E_N(\boldsymbol{\theta})
+&amp;= -\log \prod_{i=1}^{N} p(y_i | \mathbf{x}_i,
+\boldsymbol{\theta})\\ &amp;=- \sum_{i=1}^{N}\{y_i\log f(\mathbf{x}_i) +
+(1-y_i)\log[1-f(\mathbf{x}_i)]\}\end{align}\]</span> </span></li>
+</ul>
+<div id="gradient_step_box"
+style="height:22px;width:220px;border:3px solid #0000FF;float:right;">
+<p style="color:#0000FF;font-size:14pt;margin-top:0;margin-bottom:.5">
+step size (user-specified)
+</p>
+</div>
+<ul>
+<li><p><span id="gradient_descent_formula"
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+<font color="blue"> Gradient descent: </font> <span
+class="math inline">\(\boldsymbol{\theta}^{(\tau+1)} =
+\boldsymbol{\theta}^{(\tau)} - \nu\nabla
+E_N(\boldsymbol{\theta}^{(\tau)})\)</span> with gradient <span
+class="math inline">\(\nabla E_N(\boldsymbol{\theta}) = \frac{\partial
+E_{N}}{\partial \boldsymbol{\theta}}\)</span> </span></p></li>
+<li><p><span
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+<font color="blue"> Stochastic gradient descent: </font> use only <span
+class="math inline">\(N^{\prime} \ll N\)</span> randomly sampled
+training points, and approximate: </span> <br></p>
+<div class="column" style="text-align:center">
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+<span class="math inline">\(\nabla E_{N}(\boldsymbol{\theta}) \simeq
+\frac{N}{N^{\prime}}\nabla E_{N^{\prime}}(\boldsymbol{\theta})\)</span>
+</span>
+</div></li>
+</ul>
+</section>
+</section>
+<section id="more-fun-patch-based-classifier" class="slide level1">
+<h1>More fun: patch-based classifier</h1>
+<div class="r-hstack">
+<div class="column" style="width:80%;">
+<ul>
+<li>Classify 3x3 image “patches”: intensity of the pixel to be
+classified + intensities of 8 neigboring pixels</li>
+<li><span class="math inline">\(\mathbf{x}\)</span> is now a
+9-dimensional vector (<span class="math inline">\(p=9\)</span>), but
+otherwise everything is the same: <br><br>
+<div class="column" style="text-align:center">
+<span class="math inline">\(p(y=1|\mathbf{x}, \boldsymbol{\hat{\theta}})
+= \sigma (\sum_{m=1}^{M} \hat{\beta}_{m}\phi_{m}(\mathbf{x}))\)</span>
+</div>
+<br></li>
+<li>But how to choose basis functions <span
+class="math inline">\(\phi_{m}(\mathbf{x})\)</span> in a 9-dimensional
+space?</li>
+</ul>
+</div>
+<p><img src="./media/patch_based_classifier_figure.png" height="300" style="display:block; margin:0;"></p>
+</div>
+</section>
+<section id="basis-functions-in-high-dimensions" class="slide level1">
+<h1>Basis functions in high dimensions</h1>
+<section data-state="slide10">
+<div class="r-hstack">
+<div class="column" style="width:50%;">
+<ul>
+<li>Idea: remember the tensor B-spline trick?</li>
+</ul>
+<div
+style="height:200px;width:400px;border:0px;float:center;text-align:left;">
+<p style="font-size:18pt;margin-top:70px;margin-bottom:50px;margin-left:50px;">
+Example: take outer products of four 1D basis functions to “make”
+sixteen 2D basis functions
+</p>
+</div>
+<div id="9d_bullet" style="float:left;">
+<ul>
+<li>Does this work in 9D?</li>
+</ul>
+</div>
+</div>
+<div class="r-vstack">
+<figure>
+<img src="./media/slide-16-image-0.png" height="450" style="display:block; margin:0;">
+<figcaption style="height:25px;width:200px;border:2px solid gray;float:center;text-align:center;margin-left:30%;margin-bottom:20px;">
+<p style="font-size:14pt;margin-top:0pt;margin-bottom:0pt;">
+2-D: “tensor B-spline”
+</p>
+</figcaption>
+</figure>
+<div id="9d_box" class="fragment fade-in"
+style="height:25px;width:350px;border:3px solid #0000FF;float:right;"
+data-fragment-index="0">
+<p style="color:#0000FF;font-size:14pt;margin-top:.5px;margin-bottom:.5px">
+No! <span class="math inline">\(4^9 = 2621444\)</span> basis functions!
+</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="adaptive-basis-functions" class="slide level1">
+<h1>Adaptive basis functions</h1>
+<section data-state="slide11">
+<ul>
+<li>Introduce extra parameters that alter the <font color="blue"><em>
+form </em></font> of a limited set of basis functions</li>
+<li><div id="parameter_formula">
+Prototypical example: <br> <br><span
+class="math inline">\(\phi_{m}(\mathbf{x}) = \begin{cases} 1 &amp;
+\text{if} \  m=1,\\ \sigma(\sum_{j=1}^{p} w_{m,j}x_{j} + w_{m,0}) &amp;
+\text{otherwise} \end{cases}\)</span>
+</div>
+<br>
+<div style="height:25px;width:160px;border:3px solid #0000FF;float:center;transform: translate(150%, 0%);" id="parameter_box" class="fragment fade-in" data-fragment-index="0">
+<p style="color:#0000FF;font-size:14pt;margin-top:.5px;margin-bottom:.5px">
+Extra parameters
+</p></li>
+<li>All parameters (<span class="math inline">\(\{w_{m,j}\}\)</span> and
+<span class="math inline">\(\{\beta_{m}\}\)</span>) optimized together
+during training (stochastic gradient descent)
+</section></li>
+</ul>
+</section>
+<section id="adaptive-basis-functions-p1" class="slide level1">
+<h1>Adaptive basis functions (p=1)</h1>
+<section data-state="slide12">
+<div class="r-stack">
+<div>
+<img src="./media/adaptive-basis-functions-p1-0.png" height="500" style="display:block; margin:0;" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/slide-21-image-0.png" height="500" style="display:block; margin:0;" class="fragment fade-in-then-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/slide-22-image-0.png" height="500" style="display:block; margin:0;" class="fragment fade-in" data-fragment-index="1">
+</div>
+</div>
+</section>
+</section>
+<section id="adaptive-basis-functions-p2" class="slide level1">
+<h1>Adaptive basis functions (p=2)</h1>
+<div class="r-stretch">
+<div>
+<img src="./media/adaptive-basis-functions-p2-0.png">
+</div>
+</div>
+</section>
+<section id="feed-forward-neural-network" class="slide level1">
+<h1>Feed-forward neural network</h1>
+<section data-state="slide13">
+<div id="nn_model">
+<p>
+So the model is <span class="math inline">\(p(y=1|\mathbf{x},
+\boldsymbol{\theta}) = \sigma(\sum_{m=1}^{M}
+\beta_{m}\phi_{m}(\mathbf{x}))\)</span>
+</p>
+<div>
+<br>
+<div id="nn_parameters" class="fragment fade-in"
+style="height:35px;width:200px;border:3px solid #0000FF;float:right;margin-right:300px"
+data-fragment-index="0">
+<p style="color:#0000FF;font-size:22pt;margin-top:.5px;margin-bottom:.5px">
+parameters
+</p>
+</div>
+<div style="float:left;">
+<p>
+with basis functions
+</p>
+</div>
+<br>
+<div id="nn_basis_functions">
+<p>
+<span class="math inline">\(\phi_{m}(\mathbf{x}) = \begin{cases} 1 &amp;
+\text{if} \  m=1,\\ \sigma(\sum_{j=1}^{p} w_{m,j}x_{j} + w_{m,0}) &amp;
+\text{otherwise} \end{cases}\)</span>
+</p>
+</div>
+</section>
+</section>
+<section id="feed-forward-neural-network-1" class="slide level1">
+<h1>Feed-forward neural network</h1>
+<section data-state="slide14">
+<div class="r-vstack">
+<div>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:14pt; line-height:0%">
+Graphical representation of our 3x3 patch-based classifier (<span
+class="math inline">\(p=9\)</span> and <span
+class="math inline">\(M=4\)</span>):</span>
+</div>
+<div style="width: 10px; height: 30px; border: 0px solid black;">
+
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/slide-25-image-0.png" height="400" style="display:block; margin:0;">
+</div>
+<div
+style="height:400px;width:35px;border:3px solid yellow;position:absolute;top=20%;left:56%;">
+
+</div>
+<div
+style="height:30px;width:150px;border:0px solid yellow;position:absolute;top=20%;left:61%;background-color:yellow;">
+<p style="font-size:16pt;margin-top:0pt">
+“hidden units”
+</p>
+</div>
+</div>
+<div style="width: 10px; height: 30px; border: 0px solid black;">
+
+</div>
+<div class="r-hstack">
+<div style="width: 10px; height: 10px; border: 0px solid black;">
+
+</div>
+<div id="flow_box1"
+style="width: 320px; height: 30px; border: 0px solid black;background-color:#add8e6;text-align:center;">
+<p style="font-size:16pt;margin-top:0pt">
+flow of information
+</p>
+</div>
+<div id="flow_box2"
+style="width: 100px; height: 10px; border: 0px solid black;">
+
+</div>
+</div>
+<ul>
+<li><span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%">Can
+insert more than one “hidden” layer (“deep learning”)</span></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="section" class="slide level1">
+<h1></h1>
+<section data-state="slide15">
+<div class="r-vstack">
+<div class="r-hstack">
+<div
+style="height:150px;width:150px;border:0px solid #0000FF;transform:translate(0%,0%);">
+<p style="font-size:14pt;margin-top:0;margin-bottom:.5">
+Applying the trained classifier on new data:
+</p>
+</div>
+<div class="r-vstack">
+<img src="./media/mr_and_classification.png" height="150" style="display:block; margin:0;">
+<div style="float:right;transform: translate(70%, -20%);">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%"><span
+class="math inline">\(p(y=1|\mathbf{x},
+\boldsymbol{\hat{\theta}})\)</span></span>
+</div>
+</div>
+<div class="fragment" data-fragment-index="1"
+style="height:150px;width:220px;border:3px solid #0000FF;transform:translate(0%,-10%);">
+<p style="color:#0000FF;font-size:14pt;margin-top:0;margin-bottom:.5">
+Filtering operations can be implemented using convolutions
+</p>
+<p>
+<span style="color:#0000FF;margin:auto; display:table;font-size:14pt;">
+<span class="math inline">\(\Rightarrow\)</span> “convolutional neural
+network” </span>
+</p>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="0">
+<div class="r-hstack">
+<div class="r-vstack">
+<div style="transform:translate(0%,-265%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%;"><span
+class="math inline">\(\{w_{2,1}, \dots, w_{2,9}\}\)</span></span>
+</div>
+<div style="transform:translate(0%,-20%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%;"><span
+class="math inline">\(\{w_{3,1}, \dots, w_{3,9}\}\)</span></span>
+</div>
+<div style="transform:translate(0%,230%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%;"><span
+class="math inline">\(\{w_{4,1}, \dots, w_{4,9}\}\)</span></span>
+</div>
+</div>
+<img src="./media/xx-3.png" height="400" style="display:block; margin:0;" id="filters">
+<div class="r-vstack">
+<div id="phi_box1"
+style="width: 300px; height: 30px; border: 0px solid black;background-color:#add8e6;text-align:center;transform:translate(0%,-380%)">
+<p style="font-size:16pt;margin-top:0pt">
+filter
+</p>
+</div>
+<div id="phi_box2"
+style="width: 300px; height: 30px; border: 0px solid black;background-color:#add8e6;text-align:center;transform:translate(0%,-7%)">
+<p style="font-size:16pt;margin-top:0pt">
+filter
+</p>
+</div>
+<div id="phi_box3"
+style="width: 300px; height: 30px; border: 0px solid black;background-color:#add8e6;text-align:center;transform:translate(0%,380%)">
+<p style="font-size:16pt;margin-top:0pt">
+filter
+</p>
+</div>
+</div>
+<div style="width: 30px; height: 30px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<div id="phi2" style="transform:translate(0%,-265%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%"><span
+class="math inline">\(\phi_2(\mathbf{x})\)</span></span>
+</div>
+<div id="phi3" style="transform:translate(0%,-20%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%"><span
+class="math inline">\(\phi_3(\mathbf{x})\)</span></span>
+</div>
+<div id="phi4" style="transform:translate(0%,230%)">
+<span
+style="margin-top:0;margin-bottom:0pt;font-size:14pt; line-height:0%"><span
+class="math inline">\(\phi_4(\mathbf{x})\)</span></span>
+</div>
+</div>
+<p><img src="./media/xx-2.png" height="460" style="display:block; margin:0;"></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="neural-networks-the-ultimate-solution"
+class="slide level1">
+<h1>Neural networks = the ultimate solution?</h1>
+<div>
+<p>
+<u><b> No model, only training data: </b></u>
+</p>
+</div>
+<br>
+<div class="r-hstack">
+<div class="r-vstack">
+<p><img src="./media/neural-networks-ultimate-solution-no-model-only-training-data-no-domain-expertise-needed-very-easy-to-train-and-deploy-super-fas.jpg" height="100" style="display:block; margin:0;transform:translate(-100%,-50%)">
+<img src="./media/not_so_good_smiley.png" height="100" style="display:block; margin:0;transform:translate(-100%,50%)"></p>
+</div>
+<div class="r-vstack">
+<div style="width:500px">
+<ul>
+<li>No domain expertise needed</li>
+<li>Very easy to train and deploy</li>
+<li>Super fast (GPUs) <br> <br></li>
+<li>Training data often very hard to get in medical imaging!</li>
+<li>Scanning hardware/software/protocol changes routinely!</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/math/math.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script>
+
+    var arrow1Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'),{x: '0%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img1'),{x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow2Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'), {x: '100%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img2'), {x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow3Slide1 = new LeaderLine(
+      document.getElementById('img1'),
+      document.getElementById('img2'),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+
+
+    var line1Slide4 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('img_gmm'), 'circle', {x: '43%', y: '0.5%', width: '20%', height:'10%'}),
+      LeaderLine.pointAnchor(document.getElementById('green_box'), {x: '0%', y: '50%'}),
+      {color: '#00FF00', path: 'straight', hide:'true', endPlug:'behind'}
+    );
+
+    var line2Slide4 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('img_gmm'), 'circle', {x: '9%', y: '90%', width: '20%', height:'10%'}),
+      LeaderLine.pointAnchor(document.getElementById('green_box'), {x: '0%', y: '50%'}),
+      {color: '#00FF00', path: 'straight', hide:'true', endPlug:'behind'}
+    );
+
+    var line3Slide4 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('img_gmm'),'circle', {x: '73%', y: '90%', width: '20%', height: '10%'}),
+      LeaderLine.pointAnchor(document.getElementById('green_box'), {x: '0%', y: '50%'}),
+      {color: '#00FF00', path: 'straight', hide:'true', endPlug:'behind'}
+    );
+
+    var arrow1Slide6 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('slide6_img1'),{x: '80%', y: '48%'}),
+      LeaderLine.pointAnchor(document.getElementById('slide6_img2'),{x: '20%', y: '50%'}),
+      {color: 'blue', path: 'straight', hide:'true', size:10}
+    );
+    var arrow2Slide6 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('slide6_img2'), {x: '80%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('slide6_img3'), {x: '20%', y: '43%'}),
+      {color: 'blue', path: 'straight', hide:'true', size:10}
+    );
+
+    var boxLineSlide9 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('gradient_descent_formula'),'circle', {x: '43.3%', y: '30%', width: '2%', height: '70%'}),
+      LeaderLine.pointAnchor(document.getElementById('gradient_step_box'), {x: '0%', y: '50%'}),
+      {color: 'blue', hide:'true', size:6, endPlug:'behind', startSocket:'top'}
+    );
+
+    var boxLineSlide10 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('9d_bullet'),'circle', {x: '23%', y: '29%', width:'70%', height:'70%'}),
+      LeaderLine.pointAnchor(document.getElementById('9d_box'), {x: '0%', y: '50%'}),
+      {color: 'blue', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+    var boxLine1Slide11 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('parameter_formula'),'circle', {x: '29%', y: '79%', width: '6%', height: '15%'}),
+      LeaderLine.pointAnchor(document.getElementById('parameter_box'), {x: '50%', y: '0%'}),
+      {color: 'blue', path:'straight', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+
+    var boxLine2Slide11 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('parameter_formula'),'circle', {x: '43%', y: '79%', width:'6%', height:'15%'}),
+      LeaderLine.pointAnchor(document.getElementById('parameter_box'), {x: '50%', y: '0%'}),
+      {color: 'blue', path:'straight', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+    var boxLine1Slide13 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('nn_model'),'circle', {x: '75%', y: '2%', width:'4%', height:'15%'}),
+      LeaderLine.pointAnchor(document.getElementById('nn_parameters'), {x: '50%', y: '0%'}),
+      {color: 'blue', path:'straight', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+    var boxLine2Slide13 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('nn_basis_functions'),'circle', {x: '44%', y: '70%', width:'6%', height:'27%'}),
+      LeaderLine.pointAnchor(document.getElementById('nn_parameters'), {x: '50%', y: '100%'}),
+      {color: 'blue', path:'straight', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+    var boxLine3Slide13 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('nn_basis_functions'),'circle', {x: '60%', y: '70%', width:'6%', height:'27%'}),
+      LeaderLine.pointAnchor(document.getElementById('nn_parameters'), {x: '50%', y: '100%'}),
+      {color: 'blue', path:'straight', hide:'true', size:6, endPlug:'behind', startSocket:'bottom'}
+    );
+
+
+    var arrow1Slide14 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('flow_box1'), {x: '98%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('flow_box2'), {x: '0%', y: '50%'}),
+      {color: '#add8e6', path: 'straight', hide:'true', size:0, endPlugSize:8}
+    );
+
+    var arrow1Slide15 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('phi_box1'), {x: '95%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('phi2'), {x: '0%', y: '58%'}),
+      {color: '#add8e6', path: 'straight', hide:'true', size:0, endPlugSize:8}
+    );
+
+    var arrow2Slide15 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('phi_box2'), {x: '95%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('phi3'), {x: '0%', y: '58%'}),
+      {color: '#add8e6', path: 'straight', hide:'true', size:0, endPlugSize:8}
+    );
+
+    var arrow3Slide15 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('phi_box3'), {x: '95%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('phi4'), {x: '0%', y: '58%'}),
+      {color: '#add8e6', path: 'straight', hide:'true', size:0, endPlugSize:8}
+    );
+
+    var currentSlide;
+
+    Reveal.on( 'slidechanged', event => {
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide1'){
+
+
+          currentSlide = '1'
+          arrow1Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)'
+          });
+          arrow3Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)' // translucent
+          });
+          arrow1Slide1.position();
+          arrow2Slide1.position();
+          arrow3Slide1.position();
+          arrow1Slide1.show();
+          arrow2Slide1.show();
+          arrow3Slide1.show();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '1' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              arrow1Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow3Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow1Slide1.show();
+              arrow3Slide1.show();
+
+            }
+          });
+
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide1'){
+
+          arrow1Slide1.hide('none');
+          arrow2Slide1.hide('none');
+          arrow3Slide1.hide('none');
+
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide2'){
+
+          currentSlide = '2'
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide4'){
+
+          line1Slide4.hide('none');
+          line2Slide4.hide('none');
+          line3Slide4.hide('none');
+
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide4'){
+
+          currentSlide = '4'
+          line1Slide4.position();
+          line2Slide4.position();
+          line3Slide4.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '4' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              line1Slide4.show();
+              line2Slide4.show();
+              line3Slide4.show();
+            }
+          });
+
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide6'){
+
+          arrow1Slide6.hide('none');
+          arrow2Slide6.hide('none');
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide6'){
+
+
+          currentSlide = '6'
+          arrow1Slide6.position();
+          arrow2Slide6.position();
+          arrow1Slide6.show();
+          arrow2Slide6.show();
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide9'){
+          boxLineSlide9.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide9'){
+
+          currentSlide = '9'
+          boxLineSlide9.position();
+          boxLineSlide9.show();
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide10'){
+          boxLineSlide10.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide10'){
+
+          currentSlide = '10'
+          boxLineSlide10.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '10' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              boxLineSlide10.show();
+            }
+          });
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide11'){
+          boxLine1Slide11.hide('none')
+          boxLine2Slide11.hide('none')
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide11'){
+
+          currentSlide = '11'
+          boxLine1Slide11.position();
+          boxLine2Slide11.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '11' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              boxLine1Slide11.show();
+              boxLine2Slide11.show();
+            }
+          });
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide12'){
+
+          currentSlide = '12'
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide13'){
+          boxLine1Slide13.hide('none')
+          boxLine2Slide13.hide('none')
+          boxLine3Slide13.hide('none')
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide13'){
+
+          currentSlide = '13'
+          boxLine1Slide13.position();
+          boxLine2Slide13.position();
+          boxLine3Slide13.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '13' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              boxLine1Slide13.show();
+              boxLine2Slide13.show();
+              boxLine3Slide13.show();
+            }
+          });
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide14'){
+          arrow1Slide14.hide('none')
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide14'){
+
+          currentSlide = '14'
+          arrow1Slide14.position();
+          arrow1Slide14.show();
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide15'){
+          arrow1Slide15.hide('none')
+          arrow2Slide15.hide('none')
+          arrow3Slide15.hide('none')
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide15'){
+
+          currentSlide = '15'
+          arrow1Slide15.position();
+          arrow2Slide15.position();
+          arrow3Slide15.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '15' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              arrow1Slide15.show();
+              arrow2Slide15.show();
+              arrow3Slide15.show();
+            }
+          });
+      }
+
+    });
+    </script>
+    </body>
+</html>

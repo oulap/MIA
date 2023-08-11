@@ -32,8 +32,6 @@ MANIFEST
 *.manifest
 *.spec
 
-# Compiled html
-*.html
 
 # Installer logs
 pip-log.txt

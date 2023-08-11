@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Koen Van Leemput">
+  <title>Generative models for segmentation part 1</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="../stylesheet/style.css"/>
+  <script src="../stylesheet/leader-line.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-state="title-slide">
+  <h1 class="title">Generative models for segmentation part 1</h1>
+  <p class="author">Koen Van Leemput</p>
+</section>
+
+<section id="course-structure" class="slide level1">
+<h1>Course structure</h1>
+<section data-state="slide1">
+<div class="r-vstack">
+<div class="r-vstack">
+<img id="img0" width="300" src="./media/course-structure-0.png" class="fragment semi-fade-out" data-fragment-index="0">
+<p style="width:100; height:20px;font-size:18px" class="fragment semi-fade-out" data-fragment-index="0">
+“Fitting functions”
+</p>
+</div>
+<div class="r-hstack" data-postion="absolute">
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-1.png" id="img1" class="fragment semi-fade-out" data-fragment-index="0">
+<p style="width:100; height:20px;font-size:18px" class="fragment semi-fade-out" data-fragment-index="0">
+“Registration”
+</p>
+</div>
+<div style="width: 200px; height: 200px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-2.png" id="img2">
+<p style="width:100; height:20px;font-size:18px">
+“Segmentation”
+</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="voxel-based-segmentation" class="slide level1">
+<h1>Voxel-based segmentation</h1>
+<section data-state="slide2">
+<div class="r-vstack">
+<div class="r-vstack" style="transform:translate(0%,10%)">
+<div class="r-hstack">
+<div>
+<img src="./media/coronal_slice.png" id="coronal_img" style="height:120px">
+</div>
+<div>
+<img src="./media/sagittal_slice.png" id="sagittal_img" style="height:120px">
+</div>
+</div>
+<div class="r-hstack" style="transform:translate(0%,-15%)">
+<div>
+<img src="./media/axial_slice.png" id="axial_img" style="width:220px;transform:translate(-15%,0%)">
+</div>
+<div>
+<img src="./media/cube.png" id="cube_img" style="width:150px;height:150px;transform:translate(15%,0%)">
+</div>
+</div>
+</div>
+<div style="transform:translate(0%,-10%)">
+<p style="font-size:18pt">
+Determine to which anatomical structure each voxel in the image belongs:
+</p>
+<ul>
+<li><span style="font-size:18pt">Think “LEGO bricks”</span></li>
+<li><span style="font-size:18pt">Outer surfaces can easily be extracted
+if needed</span></li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="voxel-based-segmentation-1" class="slide level1">
+<h1>Voxel-based segmentation</h1>
+<section data-state="slide3">
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div class="r-hstack">
+<div>
+<img src="./media/coronal_slice.png" id="coronal_img" style="height:120px">
+</div>
+<div>
+<img src="./media/sagittal_slice.png" id="sagittal_img" style="height:120px">
+</div>
+</div>
+<div class="r-hstack" style="transform:translate(0%,-15%)">
+<div>
+<img src="./media/axial_slice.png" id="axial_img" style="width:220px;transform:translate(-10%,0%)">
+</div>
+<div>
+<img src="./media/cube.png" id="cube_img" style="width:150px;height:150px;transform:translate(15%,0%);opacity:0">
+</div>
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-10%, 0%)">
+<div style="width:200px; transform:translate(0%, 20%)">
+<span style="font-size:24pt"> Automated computational methods </span>
+</div>
+<div style="font-size:168pt;transform:translate(0%,-20%)">
+⇨
+</div>
+</div>
+<p><img src="./media/fs_surf.png" style="width:400px;transform:translate(20%,0%)"></p>
+</div>
+</section>
+</section>
+<section id="this-week-and-next-week" class="slide level1">
+<h1>This week and next week</h1>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div class="r-hstack">
+<div>
+<img src="./media/coronal_slice.png" id="coronal_img" style="height:120px">
+</div>
+<div>
+<img src="./media/sagittal_slice.png" id="sagittal_img" style="height:120px">
+</div>
+</div>
+<div class="r-hstack" style="transform:translate(0%,-15%)">
+<div>
+<img src="./media/axial_slice.png" id="axial_img" style="width:220px;transform:translate(-10%,0%)">
+</div>
+<div>
+<img src="./media/cube.png" id="cube_img" style="width:150px;height:150px;transform:translate(15%,0%);opacity:0">
+</div>
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-10%, 0%)">
+<div style="width:200px; transform:translate(0%, 20%)">
+<span style="font-size:24pt"> Automated computational methods </span>
+</div>
+<div style="font-size:168pt;transform:translate(0%,-20%)">
+⇨
+</div>
+</div>
+<div class="r-vstack">
+<p><img src="./media/wm_surf.png" style="width:200px;transform:translate(20%,0%)">
+<img src="./media/gm_surf.png" style="width:200px;transform:translate(20%,0%)"></p>
+</div>
+</div>
+</section>
+<section id="the-problem-to-be-solved" class="slide level1">
+<h1>The problem to be solved</h1>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%)">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+<div class="fragment fade-out" style="width:200px"
+data-fragment-index="0">
+<p><span style="font-size:18pt"><span class="math inline">\(N\)</span>
+voxels </span> <br> <span style="font-size:18pt"><span
+class="math inline">\(\mathbf{d} = (d_1,\dots,d_N)^T\)</span> </span>
+<span style="font-size:18pt"><span class="math inline">\(d_n:\)</span>
+intensity in voxel <span class="math inline">\(n\)</span> </span></p>
+</div>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="0">
+<div style="font-size:168pt;transform:translate(0%,20%);color:blue;">
+⇨
+</div>
+<p><img src="./media/emoji.png" style="width:150px;transform:translate(0%,-20%)"></p>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="0"
+style="transform:translate(20%,0%)">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:220px;border:solid black 2px; transform:translate(0%, -40%)">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+<div style="width:200px">
+<p><span style="font-size:18pt"><span class="math inline">\(\mathbf{l} =
+(l_1,\dots,l_N)^T\)</span> </span> <span style="font-size:18pt"><span
+class="math inline">\(l_n \in \{1,\dots,K\}\)</span> </span> <span
+style="font-size:18pt"><span class="math inline">\(K:\)</span> number of
+classes </span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="one-solution-generative-modeling" class="slide level1">
+<h1>One solution: generative modeling</h1>
+<ul>
+<li>Formulate a statistical model of how a medical image is formed <br>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta}_l)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px">
+“labeling model”
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-30%,0%)">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+</div>
+<div class="r-vstack">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span class="math inline">\(p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\theta}_d)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px;">
+“imaging model”
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+</div>
+<br></li>
+<li>The model depends on some parameters <span
+class="math inline">\(\boldsymbol{\theta} =
+(\boldsymbol{\theta_{l}}^{T},
+\boldsymbol{\theta_{d}}^{T})^T\)</span></li>
+<li>Appropriate values <span
+class="math inline">\(\boldsymbol{\hat{\theta}}\)</span> are assumed to
+be known for now…</li>
+</ul>
+</section>
+<section id="toy-example" class="slide level1">
+<h1>Toy example</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<div
+style="width:400px;float:left;align:left;transform:translate(-50%,0%)">
+<p>
+<span class="math inline">\(N=2\)</span> voxels
+</p>
+<p>
+<span class="math inline">\(K=3\)</span> classes
+</p>
+</div>
+<div class="r-stack">
+<div class="fragment fade-out"
+style="width:200px;float:center;align:center" data-fragment-index="0">
+<p>
+<span class="math inline">\(\mathbf{l}=\begin{pmatrix}l_1 \\ l_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+<div class="fragment fade-in"
+style="width:200px;float:center;align:center" data-fragment-index="0">
+<p>
+<span class="math inline">\(\mathbf{d}=\begin{pmatrix}d_1 \\ d_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+</div>
+</div>
+<div class="r-stack">
+<div class="r-hstack fragment fade-out" data-fragment-index="0">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div
+style="width:400px;float:center;align:center;transform:translate(0%,50%)">
+<p>
+<span class="math inline">\(p(\mathbf{l}) = p(l_1, l_2)\)</span>
+</p>
+</div>
+<p><img src="./media/toy_label_probs.png" style="height:300px;transform:translate(0%,0%)"></p>
+</div>
+<div class="r-vstack" style="transform:translate(20%,0%)">
+<div
+style="width:400px;float:center;align:center;transform:translate(0%,50%)">
+<p>
+<span class="math inline">\(p(\mathbf{l}) = p(l_1, l_2)\)</span>
+</p>
+</div>
+<p><img src="./media/toy_label_probs2.png" style="height:300px;transform:translate(0%,10%)"></p>
+</div>
+</div>
+<div class="r-hstack fragment fade-in" data-fragment-index="0">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div
+style="width:400px;float:center;align:center;transform:translate(0%,50%)">
+<p>
+<span class="math inline">\(p(\mathbf{d}|\mathbf{l}) = p(d_1, d_2 | l_1,
+l_2)\)</span>
+</p>
+</div>
+<p><img src="./media/toy_label_intensity_probs.png" style="height:300px;transform:translate(0%,0%)"></p>
+</div>
+<p><img src="./media/toy_labels.png" style="height:100px;transform:translate(0%,50%)"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="one-solution-generative-modeling-1" class="slide level1">
+<h1>One solution: generative modeling</h1>
+<ul>
+<li>Formulate a statistical model of how a medical image is formed <br>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta}_l)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px">
+“labeling model”
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-30%,0%)">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+</div>
+<div class="r-vstack">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span class="math inline">\(p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\theta}_d)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px;">
+“imaging model”
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+</div>
+<br></li>
+<li>The model depends on some parameters <span
+class="math inline">\(\boldsymbol{\theta} =
+(\boldsymbol{\theta_{l}}^{T},
+\boldsymbol{\theta_{d}}^{T})^T\)</span></li>
+<li>Appropriate values <span
+class="math inline">\(\boldsymbol{\hat{\theta}}\)</span> are assumed to
+be known for now…</li>
+</ul>
+</section>
+<section id="segmentation-inverse-problem" class="slide level1">
+<h1>Segmentation = inverse problem</h1>
+<div class="r-hstack" style="transform:translate(0%,-20%)">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%)">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+<div class="r-vstack">
+<div style="font-size:168pt;transform:translate(0%,20%);color:blue;">
+⇨
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/emoji.png" style="width:150px;transform:translate(0%,-20%)" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/emoji_pointy.png" style="width:200px;transform:translate(0%,-10%)" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="0"
+style="transform:translate(20%,0%)">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,25%)">
+<div
+style="width:220px;border:solid black 2px; transform:translate(0%, 70%)">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+<div style="width:200px;transform:translate(0%,20%)">
+<p><span style="font-size:22pt"><span
+class="math inline">\(\mathbf{\hat{l}} = \arg \max_{\mathbf{l}}
+p(\mathbf{l}|\mathbf{d}, \boldsymbol{\theta})\)</span> </span></p>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="0"
+style="transform:translate(0%,-60%)">
+<p>
+The posterior distribution <span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}})\)</span> is given by Bayes’ rule:
+</p>
+<div class="r-hstack">
+<div class="r-stack">
+<div>
+<span class="fragment fade-out" data-fragment-index="1"><span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) = \frac{p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\hat{\theta}_d})
+p(\mathbf{l}|\boldsymbol{\hat{\theta}_l})}{p(\mathbf{d}|\boldsymbol{\hat{\theta}})}\)</span></span>
+</div>
+<div>
+<span class="fragment fade-in-then-out" data-fragment-index="1"><span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) = \frac{p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\hat{\theta}_d})
+\textcolor{blue}{p(\mathbf{l}|\boldsymbol{\hat{\theta}_l})}}{p(\mathbf{d}|\boldsymbol{\hat{\theta}})}\)</span></span>
+</div>
+<div>
+<span class="fragment fade-in-then-out" data-fragment-index="2"><span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) =
+\frac{\textcolor{blue}{p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\hat{\theta}_d})}
+p(\mathbf{l}|\boldsymbol{\hat{\theta}_l})}{p(\mathbf{d}|\boldsymbol{\hat{\theta}})}\)</span></span>
+</div>
+<div>
+<span class="fragment fade-in" data-fragment-index="3"><span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) = \frac{p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\hat{\theta}_d})
+p(\mathbf{l}|\boldsymbol{\hat{\theta}_l})}{\textcolor{blue}{p(\mathbf{d}|\boldsymbol{\hat{\theta}})}}\)</span></span>
+</div>
+</div>
+<div class="r-stack">
+<div class="fragment fade-in-then-out" data-fragment-index="1">
+<p style="color:blue;transform:translate(50%,0%)">
+labeling model
+</p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<p style="color:blue;transform:translate(50%,0%)">
+imaging model
+</p>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<p style="color:blue;transform:translate(10%,0%)">
+<span style="font-size:18pt"><span
+class="math inline">\(p(\mathbf{d}|\boldsymbol{\hat{\theta}}) =
+\sum_{\mathbf{l}} p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\hat{\theta}_{d}})p(\mathbf{l}|\boldsymbol{\hat{\theta}_l})\)</span>
+</span> (not needed)
+</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="gaussian-mixture-model" class="slide level1">
+<h1>Gaussian mixture model</h1>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta}_l)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px">
+“labeling model”
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-30%,0%)">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:220px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+</div>
+<div class="r-vstack" style="opacity:0.3">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span class="math inline">\(p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\theta}_d)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px;">
+“imaging model”
+</div>
+</div>
+<div class="r-vstack" style="opacity:0.3">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+</div>
+<ul>
+<li>Assign a label to each voxel independently</li>
+<li>Probability of assigning label <span
+class="math inline">\(k\)</span> is <span
+class="math inline">\(\pi_k\)</span>
+<p>
+<span class="math inline">\(p(\mathbf{l} | \boldsymbol{\theta}_l) =
+\prod_n \pi_{l_n}, \quad \boldsymbol{\theta}_l = (\pi_{1}, \dots,
+\pi_{K})^T\)</span>
+</p></li>
+</ul>
+</section>
+<section id="toy-example-1" class="slide level1">
+<h1>Toy example</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<div
+style="width:400px;float:left;align:left;transform:translate(-50%,0%)">
+<p>
+<span class="math inline">\(N=2\)</span> voxels
+</p>
+<p>
+<span class="math inline">\(K=3\)</span> classes
+</p>
+</div>
+<div style="width:200px;float:center;align:center">
+<p>
+<span class="math inline">\(\mathbf{l}=\begin{pmatrix}l_1 \\ l_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+</div>
+<div
+style="width:400px;float:center;align:center;transform:translate(0%,50%)">
+<p>
+<span class="math inline">\(p(\mathbf{l}) = p(l_1, l_2) = p(l_2 |
+{\color{red}\cancel{{\color{black}l_1}}})p(l_1)\)</span>
+</p>
+</div>
+<div class="r-hstack" style="transform:translate(0%,20%)">
+<img src="./media/label_probs_toy_example.png" style="height:250px;transform:translate(-20%,0%)">
+<div style="width:50px;font-size:48pt;transform:translate(-50%,-30%)">
+<span class="math inline">\(=\)</span>
+</div>
+<img src="./media/label_probs_toy_example_column.png" style="height:200px;transform:translate(0%,-10%)">
+<div
+style="width:50px;height:50px;font-size:48pt;transform:translate(0%,-80%)">
+<span class="math inline">\(\cdot\)</span>
+</div>
+<p><img src="./media/label_probs_toy_example_row.png" style="height:100px;transform:translate(0%,-70%)"></p>
+</div>
+</div>
+</section>
+<section id="gaussian-mixture-model-1" class="slide level1">
+<h1>Gaussian mixture model</h1>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%);opacity:0.3">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta}_l)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px">
+“labeling model”
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-30%,0%);opacity:0.3">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:220px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+</div>
+<div class="r-vstack">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span class="math inline">\(p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\theta}_d)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px;">
+“imaging model”
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+</div>
+<ul>
+<li>Draw the intensity in each voxel with label <span
+class="math inline">\(k\)</span> from a Gaussian distribution with mean
+<span class="math inline">\(\mu_{k}\)</span> and variance <span
+class="math inline">\(\sigma_{k}^{2}\)</span>
+<p>
+<span class="math inline">\(p(\mathbf{d} | \mathbf{l},
+\boldsymbol{\theta}_l) = \prod_n \mathcal{N}(d_{n}|\mu_{{l_{n}}},
+\sigma_{l_{n}}^{2}), \quad \boldsymbol{\theta}_d = (\mu_{1}, \dots,
+\mu_{K},\sigma_{1}^{2}, \dots, \sigma_{K}^{2})^T\)</span>
+</p>
+<p style="text-align:center">
+<span class="math inline">\(\mathcal{N}(d|\mu,\sigma^2) =
+\frac{1}{\sqrt{2\pi\sigma^2}}\exp[-\frac{(d-\mu)^{2}}{2\sigma^{2}}]\)</span>
+</p></li>
+</ul>
+</section>
+<section id="toy-example-2" class="slide level1">
+<h1>Toy example</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<div class="r-vstack">
+<div
+style="width:400px;float:left;align:left;transform:translate(-50%,0%)">
+<p>
+<span class="math inline">\(N=2\)</span> voxels
+</p>
+<p>
+<span class="math inline">\(K=3\)</span> classes
+</p>
+</div>
+<p><img src="./media/toy_labels.png" style="width:150px;transform:translate(-130%,-30%)"></p>
+</div>
+<div
+style="width:200px;float:center;align:center;transform:translate(0%,-50%)">
+<p>
+<span class="math inline">\(\mathbf{d}=\begin{pmatrix}d_1 \\ d_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+</div>
+<div
+style="width:400px;float:center;align:center;transform:translate(-50%,-90%)">
+<p>
+<span class="math inline">\(p(\mathbf{d}|\mathbf{l}) = p(d_1, d_2 | l_1,
+l_2) = p(d_2 |{\color{red}\cancel{{\color{black}l_1}}}, l_2,
+{\color{red}\cancel{{\color{black}d_1}}})p(d_1 | l_1,
+{\color{red}\cancel{{\color{black}l_2}}})\)</span>
+</p>
+</div>
+<div class="r-hstack" style="transform:translate(0%,-30%)">
+<img src="./media/toy_label_intensity_probs1.png" style="height:250px;transform:translate(-20%,0%)">
+<div style="width:50px;font-size:48pt;transform:translate(-50%,-30%)">
+<span class="math inline">\(=\)</span>
+</div>
+<img src="./media/toy_label_intensity_probs1_column.png" style="height:250px;transform:translate(0%,-5%)">
+<div
+style="width:50px;height:50px;font-size:48pt;transform:translate(0%,-80%)">
+<span class="math inline">\(\cdot\)</span>
+</div>
+<p><img src="./media/toy_label_intensity_probs1_row.png" style="height:50px;transform:translate(0%,-220%)"></p>
+</div>
+</div>
+</section>
+<section id="gaussian-mixture-model-2" class="slide level1">
+<h1>Gaussian mixture model</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<img src="./media/mri_gmm.png" style="height:250px;transform:translate(-10%,0%)">
+<div class="r_vstack">
+<img src="./media/gmm_hist.png" style="width:500px;transform:translate(10%,-10%)">
+<div style="text-align:center;transform:translate(10%,0%)">
+<span class="math inline">\(K=3\)</span> labels
+</div>
+</div>
+</div>
+<div style="width:90%">
+<br>
+<p>
+<span class="math inline">\(p(\mathbf{d}|\boldsymbol{\theta}) =
+\prod_n(\sum_k\mathcal{N}(d_n|\mu_k,\sigma_k^2)\pi_k)\)</span>
+</p>
+<br>
+<p>
+<span class="math inline">\(\boldsymbol{\theta} =
+(\mu_{1},\dots,\mu_{K},\sigma_{1}^{2},\dots,\sigma_{K}^{2},\pi_{k},\dots,\pi_{K})^T\)</span>
+</p>
+</div>
+</div>
+</section>
+<section id="posterior-probability-distribution" class="slide level1">
+<h1>Posterior probability distribution</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<img src="./media/mri_gmm.png" style="height:200px;transform:translate(-10%,0%)">
+<div style="width:70%;transform:translate(10%,0%);font-size:16pt">
+<p><span style="font-size:16pt"> <span
+class="math inline">\(\begin{align} p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) &amp;=
+\frac{p(\mathbf{d}|\mathbf{l},\boldsymbol{\hat{\theta}_{d}})
+p(\mathbf{l}|\boldsymbol{\hat{\theta}_{l}})}{p(\mathbf{d}|\boldsymbol{\hat{\theta}})}\\
+&amp;=\frac{\prod_n\mathcal{N}(d_n|\hat{\mu}_{l_{n}},\hat{\sigma}_{l_n})^2)\prod_n\hat{\pi}_{l_n}}{\prod_n\sum_k\mathcal{N}(d_n|\hat{\mu}_{k},
+\hat{\sigma}_{k}^{2})\hat{\pi}_{k}}\\ &amp;=\prod_n
+p(l_n|d_n,\boldsymbol{\hat{\theta}}) \end{align}\)</span> </span></p>
+</div>
+</div>
+<img src="./media/mri_gmm_probabilities.png" style="height:180px;transform:translate(0%,0%)">
+<div style="font-size:18pt">
+<p style="font-size:18pt">
+<span class="math inline">\(p(l_n|d_n,\boldsymbol{\hat{\theta}}) =
+\frac{\mathcal{N}(d_{n}|\hat{\mu}_{l_{n}},
+\hat{\sigma}_{l_{n}}^{2})\hat{\pi}_{l_{n}}}{\sum_k\mathcal{N}(d_n|\hat{\mu}_{k},
+\hat{\sigma}_{k}^{2})\hat{\pi}_{k}}\)</span>
+</p>
+</div>
+</div>
+</section>
+<section id="maximum-a-posteriori-segmentation" class="slide level1">
+<h1>Maximum a posteriori segmentation</h1>
+<section data-state="slide4">
+<div class="r-vstack">
+<div style="width:90%">
+<p>
+<span class="math inline">\(\mathbf{\hat{l}} =
+\arg\max_{\mathbf{l}}p(\mathbf{l}|\mathbf{d},\boldsymbol{\hat{\theta}})
+= \arg\max_{l_1,\dots,l_I}p(l_n|d_n,\boldsymbol{\hat{\theta}})\)</span>
+</p>
+</div>
+<div class="r-hstack">
+<p><img src="./media/gmm_mri_seg.png" style="height:300px;transform:translate(0%,0%)" id="mri_seg">
+<img src="./media/gmm_hist_seg.png" style="height:300px;transform:translate(0%,0%)"></p>
+</div>
+<div class="r-hstack">
+<div id="csf_box"
+style="width:120px;height:50px;background-color:#4169E1;text-align:middle;float:left;transform:translate(-200%,-50%)">
+CSF
+</div>
+<div id="gm_box"
+style="width:250px;height:50px;background-color:red;text-align:middle;transform:translate(-120%,90%)">
+gray matter
+</div>
+<div id="wm_box"
+style="width:250px;height:50px;background-color:#98FB98;text-align:middle;transform:translate(-120%,-50%)">
+white matter
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="problem-solved" class="slide level1">
+<h1>Problem solved?</h1>
+<div style="width:100%; text-align:center;float:center;align:center">
+<p>Two-component Gaussian mixture model: tumor vs. “other”</p>
+</div>
+<div class="r-vstack">
+<img src="./media/mr_scan_tumor_seg.png" style="height:400px;transform:translate(0%,0%)">
+<div class="r-hstack">
+<div
+style="width:120px;height:40px;line-height:70px;border:solid black 4px;transform:translate(-10%,-80%)">
+<p style="font-size:18pt;line-height:0">
+MR scan
+</p>
+</div>
+<div
+style="width:400px;height:40px;border:solid black 4px;transform:translate(40%,-80%)">
+<p style="font-size:18pt;line-height:0">
+Posterior probability for tumor
+</p>
+</div>
+</div>
+</div>
+</section>
+<section id="gaussian-mixture-model-3" class="slide level1">
+<h1>Gaussian mixture model</h1>
+<div class="r-hstack">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta}_l)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px">
+“labeling model”
+</div>
+</div>
+<div class="r-vstack" style="transform:translate(-10%,0%)">
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
+<img src="./media/label_image_coronal.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="0">
+<img src="./media/label_image_1.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="1">
+<img src="./media/label_image_2.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<img src="./media/label_image_3.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<img src="./media/label_image_4.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+</div>
+<div
+style="width:210px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>Label image <span class="math inline">\(\mathbf{l}\)</span>
+</span>
+</div>
+</div>
+<div class="r-vstack">
+<div style="width:200px;transform:translate(0%,120%)">
+<span><span class="math inline">\(p(\mathbf{d}|\mathbf{l},
+\boldsymbol{\theta}_d)\)</span></span>
+</div>
+<div
+style="font-size:92pt;transform:translate(0%,0%);color:blue;width:200px">
+⇨
+</div>
+<div
+style="font-size:24pt;transform:translate(0%,-50%);color:blue;width:200px;">
+“imaging model”
+</div>
+</div>
+<div class="r-vstack">
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
+<img src="./media/mri_coronal.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="0">
+<img src="./media/mri_image_1.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="1">
+<img src="./media/mri_image_2.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<img src="./media/mri_image_3.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<img src="./media/mri_image_4.png" style="width:200px;transform:translate(0%,0%)">
+</div>
+</div>
+<div
+style="width:200px;border:solid black 2px; transform:translate(0%, -40%);text-align:center;">
+<span>MRI image <span class="math inline">\(\mathbf{d}\)</span> </span>
+</div>
+</div>
+</div>
+<div class="r-stack">
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="0">
+<div>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\mu_1=70,
+\mu_2=90\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\sigma_1=5,
+\sigma_2=5\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\pi_1=0.5,
+\pi_2=0.5\)</span></span>
+</p>
+</div>
+<div>
+<img src="./media/random_hist1.png" style="height:250px;transform:translate(0%,0%)">
+</div>
+</div>
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="1">
+<div>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\mu_1=70,
+\mu_2=90\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\sigma_1=5,
+\sigma_2=5\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\pi_1=0.2,
+\pi_2=0.8\)</span></span>
+</p>
+</div>
+<div>
+<img src="./media/random_hist2.png" style="height:250px;transform:translate(0%,0%)">
+</div>
+</div>
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="2">
+<div>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\mu_1=70,
+\mu_2=90\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\sigma_1=5,
+\sigma_2=5\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\pi_1=0.8,
+\pi_2=0.2\)</span></span>
+</p>
+</div>
+<div>
+<img src="./media/random_hist3.png" style="height:250px;transform:translate(0%,0%)">
+</div>
+</div>
+<div class="r-hstack fragment fade-in" data-fragment-index="3">
+<div>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\mu_1=70,
+\mu_2=90\)</span></span>
+</p>
+<p>
+<span style="font-size:20pt"><span class="math inline">\(\sigma_1=5,
+\sigma_2=5\)</span></span>
+</p>
+</div>
+<div>
+<img src="./media/random_hist4.png" style="height:250px;transform:translate(0%,0%)">
+</div>
+</div>
+</div>
+</section>
+<section id="markov-random-field-model" class="slide level1">
+<h1>Markov random field model</h1>
+<ul>
+<li>Prior that prefers voxels with the same label to be spatially
+clustered
+<div class="r-stack">
+<div class="r-vstack fragment fade-out" data-fragment-index="0">
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+\beta\sum_{(i,j)}\delta(l_i\neq l_j)\)</span>
+</p>
+</div>
+<div style="color:blue;opacity:0">
+sum over all neighboring voxels
+</div>
+</div>
+<div class="r-vstack fragment fade-in-then-out" data-fragment-index="0">
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+\beta{\color{blue}\sum_{(i,j)}}\delta(l_i\neq l_j)\)</span>
+</p>
+</div>
+<div style="color:blue;">
+sum over all neighboring voxels
+</div>
+</div>
+<div class="r-vstack fragment fade-in-then-out" data-fragment-index="1">
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+\beta\sum_{(i,j)}{\color{blue}\delta(l_i\neq l_j)}\)</span>
+</p>
+</div>
+<div style="color:blue;">
+zero if labels are the same, one otherwise
+</div>
+</div>
+<div class="r-vstack fragment fade-in-then-out" data-fragment-index="2">
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+{\color{blue}\beta}\sum_{(i,j)}\delta(l_i\neq l_j)\)</span>
+</p>
+</div>
+<div style="color:blue;">
+Parameter controlling strength of penalization
+</div>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="3">
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+\beta\sum_{(i,j)}\delta(l_i\neq l_j)\)</span>
+</p>
+</div>
+<div style="color:blue;opacity:0">
+Parameter controlling strength of penalization
+</div>
+</div>
+</div></li>
+</ul>
+<div class="r-stack">
+<div class="r-vstack fragment fade-out" data-fragment-index="3">
+<ul>
+<li><span class="math inline">\(Z(\boldsymbol{\theta_l}) =
+\sum_{\mathbf{l}}\exp(-U(\mathbf{l}|\boldsymbol{\theta_{l}}))\)</span>
+is a normalizing constant
+<div style="color:blue;opacity:0">
+Not needed in practice
+</div></li>
+</ul>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="3">
+<ul>
+<li><span class="math inline">\({\color{blue}Z(\boldsymbol{\theta_l}) =
+\sum_{\mathbf{l}}\exp(-U(\mathbf{l}|\boldsymbol{\theta_{l}}))}\)</span>
+is a normalizing constant
+<div style="color:blue;">
+Not needed in practice
+</div></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="markov-random-field-model-1" class="slide level1">
+<h1>Markov random field model</h1>
+<ul>
+<li>Slightly more general
+<div style="align:center;text-align:center">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_l}) =
+\frac{1}{Z(\boldsymbol{\theta_l})}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta}_l))\)</span>
+</p>
+<p>
+<span class="math inline">\(U(\mathbf{l}|\boldsymbol{\theta}_l) =
+\beta\sum_{(i,j)}\delta(l_i\neq l_j)
+{\color{blue}-\sum_i\log(\pi_{l_i})}\)</span>
+</p>
+<p><br></p>
+</div></li>
+<li><span class="math inline">\(\boldsymbol{\theta_l} = (\beta,
+\pi_{1},\dots,\pi_{K})^T\)</span> are the model parameters</li>
+<li>Reduces to Gaussian mixture model prior <span
+class="math inline">\(p(\mathbf{l}|\boldsymbol{\theta_{l}}) =
+\prod_{n}\pi_{{l_{n}}}\)</span> for <span
+class="math inline">\(\beta=0\)</span>!</li>
+</ul>
+</section>
+<section id="toy-example-3" class="slide level1">
+<h1>Toy example</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<div
+style="width:400px;float:left;align:left;transform:translate(-50%,0%)">
+<p>
+<span class="math inline">\(N=2\)</span> voxels
+</p>
+<p>
+<span class="math inline">\(K=3\)</span> classes
+</p>
+</div>
+<div style="width:200px;float:center;align:center">
+<p>
+<span class="math inline">\(\mathbf{l}=\begin{pmatrix}l_1 \\ l_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+</div>
+<div class="r-hstack">
+<div
+style="width:350px;height:400px;border:solid blue 2px;padding:10px 10px 10px 10px;transform:translate(-20%,0%)">
+<div class="r-vstack">
+<div>
+<span class="math inline">\(\beta = 0\)</span>
+</div>
+<img src="./media/label_probs_beta0.png" style="width:400px;transform:translate(0%,0%)">
+<div>
+<span class="math inline">\(p(\mathbf{l}) = p(l_2 |
+{\color{red}\cancel{{\color{black}l_1}}})p(l_1)\)</span>
+</div>
+</div>
+</div>
+<div
+style="width:350px;height:400px;border:solid blue 2px;padding:10px 10px 10px 10px;transform:translate(20%,0%)">
+<div class="r-vstack">
+<div>
+<span class="math inline">\(\beta = 3.0\)</span>
+</div>
+<img src="./media/label_probs_beta3.png" style="width:400px;transform:translate(0%,0%)">
+<div>
+<span class="math inline">\(p(\mathbf{l}) = p(l_1, l_2)\)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="samples" class="slide level1">
+<h1>Samples</h1>
+<div class="r-hstack">
+<p><img src="./media/mrf_sample_1.png" style="width:300px;transform:translate(0%,0%)">
+<img src="./media/mrf_sample_2.png" style="width:300px;transform:translate(0%,0%)">
+<img src="./media/mrf_sample_3.png" style="width:300px;transform:translate(0%,0%)"></p>
+</div>
+<p>
+Different values for model parameters <span
+class="math inline">\(\boldsymbol{\theta_{l}} =
+(\beta,\pi_{1},\dots,\pi_{K})^{T}\)</span>
+</p>
+</section>
+<section id="why-exactly-this-model" class="slide level1">
+<h1>Why exactly this model</h1>
+<ul>
+<li>Long-range statistical dependencies between voxels</li>
+<li>Local computations (efficient!):
+<div class="r-stack">
+<div class="r-hstack fragment fade-out" data-fragment-index="0">
+<div>
+<p>
+<span class="math inline">\(\begin{align} p(l_i|l_{\setminus i}) &amp;=
+\frac{p(\mathbf{l})}{p(\mathbf{l}_{\setminus i})}\\ &amp;=
+\frac{p(\mathbf{l})}{\sum_{l_i}p(\mathbf{l})}\\ &amp;=
+\frac{\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}{\sum_{l_i}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}\\ &amp;=
+\frac{\pi_{l_i}\cdot\exp(-\beta\sum_{j\in\mathfrak{N}_i}\delta(l_i\neq
+l_j))}{\sum_{k}\pi_{k}\cdot\exp(-\beta\sum_{j\in\mathfrak{N}_i}\delta(l_i\neq
+k))} \end{align}\)</span>
+</p>
+</div>
+<div style="width:250px;color:blue;opacity:0;">
+All labels except the one of voxel <span
+class="math inline">\(i\)</span>
+</div>
+</div>
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="0">
+<div>
+<p>
+<span class="math inline">\(\begin{align}
+p(l_i|{\color{blue}l_{\setminus i}}) &amp;=
+\frac{p(\mathbf{l})}{p(\mathbf{l}_{\setminus i})}\\ &amp;=
+\frac{p(\mathbf{l})}{\sum_{l_i}p(\mathbf{l})}\\ &amp;=
+\frac{\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}{\sum_{l_i}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}\\ &amp;=
+\frac{\pi_{l_i}\cdot\exp(-\beta\sum_{j\in\mathfrak{N}_i}\delta(l_i\neq
+l_j))}{\sum_{k}\pi_{k}\cdot\exp(-\beta\sum_{j\in\mathfrak{N}_i}\delta(l_i\neq
+k))} \end{align}\)</span>
+</p>
+</div>
+<div style="width:250px;color:blue;">
+All labels except the one of voxel <span
+class="math inline">\(i\)</span>
+</div>
+</div>
+<div class="r-hstack fragment fade-in" data-fragment-index="1">
+<div>
+<p>
+<span class="math inline">\(\begin{align} p(l_i|l_{\setminus i}) &amp;=
+\frac{p(\mathbf{l})}{p(\mathbf{l}_{\setminus i})}\\ &amp;=
+\frac{p(\mathbf{l})}{\sum_{l_i}p(\mathbf{l})}\\ &amp;=
+\frac{\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}{\sum_{l_i}
+\exp(-U(\mathbf{l}|\boldsymbol{\theta_l}))}\\ &amp;=
+\frac{\pi_{l_i}\cdot\exp(-\beta\sum_{j\in{\color{blue}\mathfrak{N}_i}}\delta(l_i\neq
+l_j))}{\sum_{k}\pi_{k}\cdot\exp(-\beta\sum_{j\in{\color{blue}\mathfrak{N}_i}}\delta(l_i\neq
+k))} \end{align}\)</span>
+</p>
+</div>
+<div style="width:250px;color:blue;">
+Neighbors of voxel <span class="math inline">\(i\)</span>
+</div>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="mean-field-approximation" class="slide level1">
+<h1>Mean field approximation</h1>
+<ul>
+<li>In the Gaussian mixture model, the posterior was of the form
+<div style="text-align:center">
+<p><span class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}}) = \prod_n p(l_n|d_n,
+\boldsymbol{\hat{\theta}})\)</span></p>
+</div></li>
+<li>With the Markov random field model, the posterior no longer
+“factorizes” that way</li>
+<li>For a 2-label model in a standard <span
+class="math inline">\(256\times 256 \times 128\)</span> MR scan, there
+are over <span class="math inline">\(10^{1000000}\)</span> unique label
+images with each its own posterior probability!</li>
+<li>Solution: approximate: <span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}})\)</span></li>
+</ul>
+</section>
+<section id="mean-field-approximation-1" class="slide level1">
+<h1>Mean field approximation</h1>
+<ul>
+<li><p>Approximate <span class="math inline">\(p(\mathbf{l}|\mathbf{d},
+\boldsymbol{\hat{\theta}})\)</span> with something of the form</p>
+<div style="text-align:center">
+<p><span class="math inline">\(q(\mathbf{l}) = \prod_n
+q_n(l_n)\)</span></p>
+</div></li>
+<li><p>Find the voxel-wise distributions <span
+class="math inline">\(q_n(k)\)</span> that minimize the difference
+between <span class="math inline">\(q(\mathbf{l})\)</span> and <span
+class="math inline">\(p(\mathbf{l}|\mathbf{d},\boldsymbol{\hat{\theta}})\)</span></p></li>
+<li><p>Quantify the difference between the two distributions using the
+“Kullback-Leibler divergence”</p>
+<div style="text-align:center">
+<p><span class="math inline">\(KL(q(\mathbf{l})\parallel
+p(\mathbf{l}|\mathbf{d},\boldsymbol{\hat{\theta}})) =
+-\sum_{\mathbf{l}}q(\mathbf{l})\log\frac{p(\mathbf{l}|\mathbf{d},\boldsymbol{\hat{\theta}})}{q(\mathbf{l})}\)</span></p>
+</div></li>
+</ul>
+</section>
+<section id="toy-example-4" class="slide level1">
+<h1>Toy example</h1>
+<div class="r-vstack">
+<div class="r-hstack">
+<div
+style="width:400px;float:left;align:left;transform:translate(-50%,0%)">
+<p>
+<span class="math inline">\(N=2\)</span> voxels
+</p>
+<p>
+<span class="math inline">\(K=3\)</span> classes
+</p>
+</div>
+<div style="width:200px;float:center;align:center">
+<p>
+<span class="math inline">\(\mathbf{l}=\begin{pmatrix}l_1 \\ l_2
+\end{pmatrix}\)</span>
+</p>
+</div>
+</div>
+<div
+style="width:400px;float:center;align:center;transform:translate(-20%,50%)">
+<p>
+<span class="math inline">\(p(\mathbf{l}|\mathbf{d}) = p(l_1, l_2|d_1,
+d_2) \simeq q(l_1)q(l_2)\)</span>
+</p>
+</div>
+<div class="r-hstack" style="transform:translate(10%,20%)">
+<img src="./media/prob_table_mean_field.png" style="height:250px;transform:translate(-20%,0%)">
+<div style="width:50px;font-size:48pt;transform:translate(-50%,-30%)">
+<span class="math inline">\(\simeq\)</span>
+</div>
+<img src="./media/prob_unknown_column.png" style="height:200px;transform:translate(0%,-10%)">
+<div
+style="width:50px;height:50px;font-size:48pt;transform:translate(0%,-80%)">
+<span class="math inline">\(\cdot\)</span>
+</div>
+<p><img src="./media/prob_unknown_row.png" style="height:100px;transform:translate(0%,-90%)">
+<img src="./media/emoji.png" style="height:150px;transform:translate(-100%,50%)"></p>
+</div>
+</div>
+</section>
+<section id="mean-field-approximation-2" class="slide level1">
+<h1>Mean field approximation</h1>
+<ul>
+<li>Solution for one voxel <span class="math inline">\(i\)</span>:
+<div style="text-align:center">
+<p><span class="math inline">\(q_{i}(l_{i}) =
+\frac{\mathcal{N}(d_{i}|\hat{\mu}_{l_{i}},\hat{\sigma}_{l_{i}}^{2})\gamma_{i}(l_{i})}{\sum_{k}\mathcal{N}(d_{i}|\hat{\mu}_{k},\hat{\sigma}_{k}^{2})\gamma_{i}(k)}\)</span></p>
+</div>
+<div class="r-stack">
+<div class="r-vstack fragment fade-out" data-fragment-index="0">
+<div style="text-align:center">
+<p>where <span class="math inline">\(\gamma_{i}(k) = \frac{\hat{\pi}_{k}
+\cdot \exp(-\beta
+\sum_{j\in\mathfrak{N}_{i}}(1-q_{j}(k)))}{\sum_{k\prime}
+\hat{\pi}_{k\prime} \cdot \exp(-\beta
+\sum_{j\in\mathfrak{N}_{i}}(1-q_{j}(k\prime)))}\)</span></p>
+</div>
+<div style="color:blue;opacity:0">
+Influenced by the result in neighboring voxels: spatial context!
+</div>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="0">
+<div style="text-align:center">
+<p>where <span class="math inline">\(\gamma_{i}(k) = \frac{\hat{\pi}_{k}
+\cdot {\color{blue}\exp(-\beta
+\sum_{j\in\mathfrak{N}_{i}}(1-q_{j}(k)))}}{\sum_{k\prime}
+\hat{\pi}_{k\prime} \cdot {\color{blue}\exp(-\beta
+\sum_{j\in\mathfrak{N}_{i}}(1-q_{j}(k\prime)))}}\)</span></p>
+</div>
+<div style="color:blue;">
+Influenced by the result in neighboring voxels: <b>spatial context!</b>
+</div>
+</div>
+</div>
+<p class="fragment fade-in" data-fragment-index="1">
+<b>Need to iterate across all voxels</b>
+</p></li>
+</ul>
+</section>
+<section id="example" class="slide level1">
+<h1>Example</h1>
+<div style="width:100%; text-align:center;float:center;align:center">
+<p>Two-component Gaussian mixture model: tumor vs. “other”</p>
+</div>
+<div class="r-stack">
+<div class="r-hstack fragment fade-out" data-fragment-index="0">
+<div class="r-vstack">
+<img src="./media/mr_scan_mean_field.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:120px;height:40px;line-height:70px;border:solid black 4px;transform:translate(0%,-70%)">
+<p style="font-size:18pt;line-height:0">
+MR scan
+</p>
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/tumor_mean_field_beta0.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:400px;height:40px;border:solid black 4px;transform:translate(0%,-70%);padding:0 0 0 0;">
+<p style="font-size:18pt;line-height:0;transform:translate(0%,-40%)">
+<span class="math inline">\(q_{n}(k)\)</span> for tumor class <span
+class="math inline">\(\beta=0\)</span>
+</p>
+</div>
+</div>
+</div>
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="0">
+<div class="r-vstack">
+<img src="./media/mr_scan_mean_field.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:120px;height:40px;line-height:70px;border:solid black 4px;transform:translate(0%,-70%)">
+<p style="font-size:18pt;line-height:0">
+MR scan
+</p>
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/tumor_mean_field_beta25.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:400px;height:40px;border:solid black 4px;transform:translate(0%,-70%);padding:0 0 0 0;">
+<p style="font-size:18pt;line-height:0;transform:translate(0%,-40%)">
+<span class="math inline">\(q_{n}(k)\)</span> for tumor class <span
+class="math inline">\(\beta=0.25\)</span>
+</p>
+</div>
+</div>
+</div>
+<div class="r-hstack fragment fade-in" data-fragment-index="1">
+<div class="r-vstack">
+<img src="./media/mr_scan_mean_field.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:120px;height:40px;line-height:70px;border:solid black 4px;transform:translate(0%,-70%)">
+<p style="font-size:18pt;line-height:0">
+MR scan
+</p>
+</div>
+</div>
+<div class="r-vstack">
+<img src="./media/tumor_mean_field_beta55.png" style="height:400px;transform:translate(0%,0%)">
+<div
+style="width:400px;height:40px;border:solid black 4px;transform:translate(0%,-70%);padding:0 0 0 0;">
+<p style="font-size:18pt;line-height:0;transform:translate(0%,-40%)">
+<span class="math inline">\(q_{n}(k)\)</span> for tumor class <span
+class="math inline">\(\beta=0.55\)</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/math/math.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script>
+
+    var arrow1Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'),{x: '0%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img1'),{x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow2Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'), {x: '100%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img2'), {x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow3Slide1 = new LeaderLine(
+      document.getElementById('img1'),
+      document.getElementById('img2'),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+
+    var arrow1Slide2= new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('coronal_img'), 'rectangle',{x: '50%', y: '50%', width:'5%', height:'5%'}),
+      LeaderLine.pointAnchor(document.getElementById('cube_img'), {x: '0%', y: '0%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'red'}
+    );
+
+    var arrow2Slide2= new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('sagittal_img'), 'rectangle',{x: '50%', y: '50%', width:'5%', height:'5%'}),
+      LeaderLine.pointAnchor(document.getElementById('cube_img'), {x: '50%', y: '0%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'red'}
+    );
+
+    var arrow3Slide2= new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('axial_img'), 'rectangle',{x: '50%', y: '50%', width:'5%', height:'5%'}),
+      LeaderLine.pointAnchor(document.getElementById('cube_img'), {x: '0%', y: '50%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'red'}
+    );
+
+    var line1Slide4= new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('mri_seg'), {x: '32%', y: '68%'}),
+      LeaderLine.pointAnchor(document.getElementById('csf_box'), {x: '50%', y: '0%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'gray', endPlug:'behind'}
+    );
+
+    var line2Slide4= new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('mri_seg'), {x: '55%', y: '76%'}),
+      LeaderLine.pointAnchor(document.getElementById('gm_box'), {x: '50%', y: '0%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'gray', endPlug:'behind'}
+    );
+
+    var line3Slide4= new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('mri_seg'), {x: '67%', y: '73%'}),
+      LeaderLine.pointAnchor(document.getElementById('wm_box'), {x: '50%', y: '0%'}),
+      {color: 'gray', hide:'true', path:'straight', color:'gray', endPlug:'behind'}
+    );
+
+    var currentSlide
+    Reveal.on( 'slidechanged', event => {
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide1'){
+
+
+          currentSlide = '1';
+        arrow1Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)'
+          });
+          arrow2Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)' // translucent
+          });
+          arrow3Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)' // translucent
+          });
+          arrow1Slide1.position();
+          arrow2Slide1.position();
+          arrow3Slide1.position();
+          arrow1Slide1.show();
+          arrow2Slide1.show();
+          arrow3Slide1.show();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '1' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              arrow1Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow2Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow3Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow1Slide1.show();
+              arrow2Slide1.show();
+              arrow3Slide1.show();
+
+            }
+          });
+
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide1'){
+
+          arrow1Slide1.hide('none');
+          arrow2Slide1.hide('none');
+          arrow3Slide1.hide('none');
+
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide2'){
+
+          arrow1Slide2.hide('none');
+          arrow2Slide2.hide('none');
+          arrow3Slide2.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide2'){
+
+
+          currentSlide = '2'
+          arrow1Slide2.position();
+          arrow2Slide2.position();
+          arrow3Slide2.position();
+          arrow1Slide2.show();
+          arrow2Slide2.show();
+          arrow3Slide2.show();
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide3'){
+        currentSlide = '3'
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide4'){
+
+          line1Slide4.hide('none');
+          line2Slide4.hide('none');
+          line3Slide4.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide4'){
+
+          currentSlide = '4'
+          line1Slide4.position();
+          line1Slide4.show();
+          line2Slide4.position();
+          line2Slide4.show();
+          line3Slide4.position();
+          line3Slide4.show();
+      }
+
+    });
+    </script>
+    </body>
+</html>

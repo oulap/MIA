@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Koen Van Leemput">
+  <title>Intensity-based registration</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="../stylesheet/style.css"/>
+  <link rel="stylesheet" href="./grid.css"/>
+  <script src="../stylesheet/leader-line.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-state="title-slide">
+  <h1 class="title">Intensity-based registration</h1>
+  <p class="author">Koen Van Leemput</p>
+</section>
+
+<section id="course-structure" class="slide level1">
+<h1>Course structure</h1>
+<section data-state="slide1">
+<div class="r-vstack">
+<div class="r-vstack">
+<img id="img0" width="300" src="./media/course-structure-0.png" class="fragment semi-fade-out" data-fragment-index="0">
+<p style="width:100; height:20px;font-size:18px" class="fragment semi-fade-out" data-fragment-index="0">
+“Fitting functions”
+</p>
+</div>
+<div class="r-hstack" data-postion="absolute">
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-1.png" id="img1">
+<p style="width:100; height:20px;font-size:18px">
+“Registration”
+</p>
+</div>
+<div style="width: 200px; height: 200px; border: 0px solid black;">
+
+</div>
+<div class="r-vstack">
+<img height="160" src="./media/course-structure-2.png" id="img2" class="fragment semi-fade-out" data-fragment-index="0">
+<p style="width:100; height:20px;font-size:18px" class="fragment semi-fade-out" data-fragment-index="0">
+“Segmentation”
+</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="image-registration" class="slide level1">
+<h1>Image registration</h1>
+<section data-state="slide2">
+<div class="r-vstack">
+<div style="font-size:18pt">
+<p>
+Determine a geometrical transformation that aligns points in an image
+with corresponding points in other image(s)
+</p>
+</div>
+<div class="r-hstack">
+<div class="r-stack">
+<div>
+<img height="300" src="./media/img1_slide1.png" id="img1_slide2">
+</div>
+<div>
+<img height="300" src="./media/img1_slide1.png" id="img1_slide2">
+</div>
+</div>
+<div class="r-stack">
+<div>
+<img height="300" src="./media/img2_slide1.png" id="img2_slide2" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img height="300" src="./media/img4_slide1.png" id="img2_slide2" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+<div class="r-stack">
+<div>
+<img height="300" src="./media/img3_slide1.png" id="img3_slide2" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img height="300" src="./media/img5_slide1.png" id="img3_slide2" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="elements-in-image-registration" class="slide level1">
+<h1>Elements in image registration</h1>
+<section data-state="slide3">
+<ul>
+<li>Geometrical transformation: <span id="formula_slide3"
+class="fragment highlight-blue" data-fragment-index="0"><span
+class="math inline">\(\quad \mathbf{y}(\mathbf{x};\mathbf{w}) :
+\mathbb{R}^{2} \rightarrow \mathbb{R}^{2}\)</span></span> or <span
+class="math inline">\(\mathbb{R}^{3} \rightarrow
+\mathbb{R}^{3}\)</span></li>
+<li>Similarity measure: <span
+class="math inline">\(\quad\mathcal{D}(\mathbf{w})\)</span></li>
+<li>Regularization: <span
+class="math inline">\(\quad\mathcal{S}(\mathbf{w})\)</span></li>
+<li>Optimization algorith: <span
+class="math inline">\(\quad\mathcal{J}(\mathbf{w}) =
+\mathcal{D}(\mathbf{w}) + \alpha\mathcal{S}(\mathbf{w})\)</span></li>
+</ul>
+</section>
+</section>
+<section id="transformations-linear" class="slide level1">
+<h1>Transformations (linear)</h1>
+<section data-state="slide4">
+<div class="r-vstack">
+<div class="r-hstack">
+<div class="r-vstack" style="margin-right:4em">
+<p style="font-size:18pt;margin-bottom:20px">
+translation
+</p>
+<div class="r-hstack">
+<div class="slidecontainer">
+<p><input type="range" min="-50" max="50" value="-20" class="slider" orient="vertical" id="translation_slider" style="outline:none; opacity:0.7 width:50px; height:100px" ></p>
+</div>
+<svg width="120" height="120">
+<use href="#trans_grid" />
+</svg>
+<svg width="120" height="120" style="transform:translate(0px,-20px)" id="translate_grid">
+<use href="#trans_grid" />
+</svg>
+</div>
+<p style="margin-top:0px">
+<span style="font-size:14pt;"> <span
+class="math inline">\(\mathbf{y}(\mathbf{x};\mathbf{t}) =
+\mathbf{x}+\mathbf{t}\)</span> </span>
+</p>
+</div>
+<div class="r-vstack" style="margin-left:4em">
+<p style="font-size:18pt; margin-bottom:20px">
+rigid: translation + rotation
+</p>
+<div class="r-hstack" style="margin-bottom:0px">
+<div class="slidecontainer">
+<p><input type="range" min="-90" max="90" value="20" class="slider" orient="vertical" id="rotation_slider" style="outline:none; opacity:0.7 width:50px; height:100px" ></p>
+</div>
+<svg width="120" height="120">
+<use href="#trans_grid" />
+</svg>
+<svg width="120" height="120" style="transform:translate(10px,-20px) rotate(20deg);" id="rotate_grid">
+<use href="#trans_grid" />
+</svg>
+</div>
+<p style="margin-top:0px">
+<span style="font-size:14pt"> <span
+class="math inline">\(\mathbf{y}(\mathbf{x};\mathbf{R},\mathbf{t}) =
+\mathbf{R}\mathbf{x}+\mathbf{t}\)</span> </span> <br> <span
+style="font-size:14pt"> <span
+class="math inline">\(\mathbf{R}^{T}\mathbf{R} = \mathbf{I}, \quad
+\det(\mathbf{R}) = 1\)</span> </span> <br>
+</p>
+</div>
+</div>
+<div class="r-hstack">
+<div class="r-vstack" style="margin-right:4em">
+<p style="font-size:18pt;margin-bottom:20px">
+similarity transformation
+</p>
+<div class="r-hstack">
+<div class="slidecontainer">
+<p><input type="range" min="0.5" max="1.5" value="1.1" step="0.1" class="slider" orient="vertical" id="scale_slider" style="outline:none; opacity:0.7 width:50px; height:100px" ></p>
+</div>
+<svg width="120" height="120">
+<use href="#trans_grid" />
+</svg>
+<svg width="120" height="120" style="transform: scale(1.1) rotate(20deg) translate(20%,-20%);" id="scale_grid">
+<use href="#trans_grid" />
+</svg>
+</div>
+<p style="margin-top:0px">
+<span style="font-size:14pt"> <span
+class="math inline">\(\mathbf{y}(\mathbf{x};s,\mathbf{R},\mathbf{t}) =
+s\mathbf{R}\mathbf{x}+\mathbf{t}, \quad s&gt;0\)</span> </span> <br>
+</p>
+</div>
+<div class="r-vstack" style="margin-left:4em">
+<p style="font-size:18pt;margin-bottom:20px">
+affine transformation
+</p>
+<div class="r-hstack">
+<div class="slidecontainer">
+<p><input type="range" min="-40" max="40" value="-30" class="slider" orient="vertical" id="skew_slider" style="outline:none; opacity:0.7 width:50px; height:100px" ></p>
+</div>
+<svg width="120" height="120">
+<use href="#trans_grid" />
+</svg>
+<svg width="120" height="120" style="transform:scale(0.8, 1.2) rotate(10deg) translate(20%,-20%) skewX(-30deg);" id="skew_grid">
+<use href="#trans_grid" />
+</svg>
+</div>
+<p style="margin-top:0px">
+<span style="font-size:14pt"> <span
+class="math inline">\(\mathbf{y}(\mathbf{x};\mathbf{A},\mathbf{t}) =
+\mathbf{A}\mathbf{x}+\mathbf{t}\)</span> </span> <br>
+</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="transformations-non-linear" class="slide level1">
+<h1>Transformations (non-linear)</h1>
+<section data-state="slide5">
+<div class="r-hstack">
+<svg width="300" height="300" style="transform:translate(-40px,0px)">
+<use href="#trans_grid" />
+</svg>
+<svg width="300" height="300" style="transform:translate(40px,0px)">
+<use href="#deformed_grid" />
+</svg>
+</div>
+</section>
+</section>
+<section id="landmark-based-registration" class="slide level1">
+<h1>Landmark based registration</h1>
+<section data-state="slide6">
+<ul>
+<li>Geometrical transformation: <span><span class="math inline">\(\quad
+\mathbf{y}(\mathbf{x};\mathbf{w}) : \mathbb{R}^{2} \rightarrow
+\mathbb{R}^{2}\)</span></span> or <span
+class="math inline">\(\mathbb{R}^{3} \rightarrow
+\mathbb{R}^{3}\)</span></li>
+<li>Similarity measure: <span id="similarity_measure"><span
+class="math inline">\(\quad\mathcal{D}(\mathbf{w})\)</span></span></li>
+<li>Regularization: <span
+class="math inline">\(\quad\mathcal{S}(\mathbf{w})\)</span></li>
+<li>Optimization algorith: <span
+class="math inline">\(\quad\mathcal{J}(\mathbf{w}) =
+\mathcal{D}(\mathbf{w}) + \alpha\mathcal{S}(\mathbf{w})\)</span></li>
+</ul>
+<div id="point_set_box"
+style="height:200px;width:90%;border:3px solid gray;float:center;">
+<p style="font-size:16pt;margin-top:50px;margin-bottom:.5">
+<span style="font-size:16pt">Match two corresponding point sets defined
+in two images: <span class="math inline">\(\quad \mathbf{x}_i,
+\mathbf{x}_i \in \mathbb{R}^{2}\)</span> or <span
+class="math inline">\(\mathbb{R}^{3}\)</span> </span> <br><br> <span
+style="font-size:16pt;margin-top:20px;"><span
+class="math inline">\(\mathcal{D}(\mathbf{w}) = \sum_{i=1}^{N} \|
+\mathbf{y}(\mathbf{x}_{i}; \mathbf{w}) - \mathbf{y}_{i}
+\|^{2}\)</span></span>
+</p>
+</div>
+</section>
+</section>
+<section id="rigid-landmark-based-registration" class="slide level1">
+<h1>Rigid landmark based registration</h1>
+<section data-state="slide7">
+<div class="r-vstack">
+<div class="r-hstack">
+<figure style="transform:translate(-50px,0)">
+<img src="./media/rigid_landmark_input.png" height="250" style="display:block; margin-bottom:0px;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%;opacity:0;">
+dummy </span>
+</figcaption>
+</figure>
+<figure style="transform:translate(50px,0)">
+<img src="./media/rigid_landmark_before.png" height="250" style="display:block; margin-bottom:0px;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+Before </span>
+</figcaption>
+</figure>
+</div>
+<div class="r-hstack">
+<figure style="transform:translate(-50px,0)">
+<img src="./media/rigid_landmark_input.png" height="250" style="opacity:0; margin-bottom:0px;">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%;opacity:0;">
+dummy </span>
+</figcaption>
+</figure>
+<figure style="transform:translate(50px,0)">
+<img src="./media/rigid_landmark_after.png" height="250" style="display:block; margin-top:0px;margin-bottom:0px">
+<figcaption>
+<span
+style="margin-top:0;margin-bottom:1pt;font-size:12pt; line-height:0%">
+After </span>
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="landmark-based-registration-1" class="slide level1">
+<h1>Landmark based registration</h1>
+<section data-state="slide8">
+<ul>
+<li>Geometrical transformation: <span><span class="math inline">\(\quad
+\mathbf{y}(\mathbf{x};\mathbf{w}) : \mathbb{R}^{2} \rightarrow
+\mathbb{R}^{2}\)</span></span> or <span
+class="math inline">\(\mathbb{R}^{3} \rightarrow
+\mathbb{R}^{3}\)</span></li>
+<li>Similarity measure: <span id="similarity_measure_slide8"><span
+class="math inline">\(\quad\mathcal{D}(\mathbf{w})\)</span></span></li>
+<li>Regularization: <span
+class="math inline">\(\quad\mathcal{S}(\mathbf{w})\)</span></li>
+<li>Optimization algorith: <span
+class="math inline">\(\quad\mathcal{J}(\mathbf{w}) =
+\mathcal{D}(\mathbf{w}) + \alpha\mathcal{S}(\mathbf{w})\)</span>
+<div class="r-hstack">
+<img src="./media/emoji.png" height="150" style="display:block; margin-top:0px;margin-bottom:0px;transform:translate(-10%,30%)">
+<div id="point_set_box_slide8"
+style="height:82px;width:40%;border:3px solid gray;float:center;transform:translate(10%,35%); padding:5px;">
+<p style="font-size:16pt;margin:5px">
+<span style="font-size:16pt"> <i>I’m too lazy to put landmarks. Can’t we
+use images directly?</i> </span>
+</p>
+</div>
+</div></li>
+</ul>
+</section>
+</section>
+<section id="intra-modality-registration" class="slide level1">
+<h1>Intra-modality registration</h1>
+<section data-state="slide9">
+<div class="r-stack">
+<div>
+<img src="./media/intra-modality-registration1.png" class="r-stretch fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/intra-modality-registration2.png" class="r-stretch fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</section>
+</section>
+<section id="intra-modality-registration-1" class="slide level1">
+<h1>Intra-modality registration</h1>
+<ul>
+<li>Sum of squared differences (SSD)
+<p>
+<span class="math inline">\(\mathcal{D}_{\text{SSD}}(\mathbf{w}) =
+\frac{1}{2}
+\sum_{i\in\Omega}(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})) -
+\mathcal{R}(\mathbf{x}_i))^2\)</span>
+</p>
+<div class="r-stack">
+<div class="r-hstack fragment fade-in-then-out" data-fragment-index="0">
+<p><img height="200" src="./media/CTs1.png" style="transform:translate(-20%, 0%)">
+<img height="200" src="./media/CT_overlap.png" style="transform:translate(20%, 0%)"></p>
+</div>
+<div class="r-hstack fragment fade-in" data-fragment-index="1">
+<p><img height="250" src="./media/CTs2.png" style="transform:translate(-20%, 0%)">
+<img height="200" src="./media/CT_overlap2.png" style="transform:translate(20%, 0%)"></p>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="intra-modality-registration-2" class="slide level1">
+<h1>Intra-modality registration</h1>
+<div>
+<img src="./media/ssd_curve.png" width="90%">
+</div>
+</section>
+<section id="miscalibration-of-intensities" class="slide level1">
+<h1>Miscalibration of intensities</h1>
+<div class="r-stack">
+<div>
+<img src="./media/CT_line_trace1.png" class="r-stretch fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/CT_line_trace2.png" class="r-stretch fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</section>
+<section id="miscalibration-of-intensities-1" class="slide level1">
+<h1>Miscalibration of intensities</h1>
+<div class="r-stack">
+<div>
+<img src="./media/trace_and_bar.png" class="fragment fade-out" data-fragment-index="0" height="400px">
+<p class="fragment fade-out" data-fragment-index="0" style="opacity:0">
+dummy
+</p>
+</div>
+<div>
+<img src="./media/trace_and_bar_substract_mean.png" class="fragment fade-in-then-out" data-fragment-index="0" height="400px">
+<p class="fragment fade-in-then-out" data-fragment-index="0">
+Substract mean
+</p>
+</div>
+<div>
+<img src="./media/trace_and_bar_divide_std.png" class="fragment fade-in" data-fragment-index="1" height="400px">
+<p class="fragment fade-in" data-fragment-index="1">
+Divide by standard deviation
+</p>
+</div>
+</div>
+</section>
+<section id="miscalibration-of-intensities-2" class="slide level1">
+<h1>Miscalibration of intensities</h1>
+<section data-state="slide14">
+<ul>
+<li>One more thing:
+<div id="constant" class="fragment fade-in" data-fragment-index="0"
+style="transform: translate(65%,-40%)">
+<span style="color:blue"> constant </span>
+</div>
+<p id="rminust">
+<span class="math inline">\(\sum_i (r_i - t_i)^2 = \sum_i (r_i^2 -
+2r_it_i + t_i^2) = \sum_i r_i^2 + \sum_i t_i^2 - 2\sum_ir_it_i\)</span>
+</p></li>
+</ul>
+<div class="r-hstack">
+<div class="r-stack">
+<div>
+<img src="./media/trace_and_bar_divide_std2.png" class="fragment fade-in-then-out" data-fragment-index="0" height="400px">
+</div>
+<div>
+<img src="./media/trace_and_bar_divide_std_t.png" class="fragment fade-in" data-fragment-index="1" height="400px">
+</div>
+</div>
+<div class="r-vstack fragment fade-in" data-fragment-index="0">
+<p style="color:blue; transform:translate(0%,-150%)">
+<span class="math inline">\(r\)</span>
+</p>
+<p style="color:red; transform:translate(0%,150%)">
+<span class="math inline">\(t\)</span>
+</p>
+</div>
+</div>
+</section>
+</section>
+<section id="miscalibration-of-intensities-3" class="slide level1">
+<h1>Miscalibration of intensities</h1>
+<section data-state="slide15">
+<ul>
+<li>Correlation coefficient (CC) <br>
+<p>
+<span class="math inline">\(\mathcal{D}_{\text{CC}}(\mathbf{w}) =
+\frac{\sum_{i\in\Omega}
+(\mathcal{T}(\mathbf{y}(\mathbf{x}_{i};\mathbf{w})) - \bar{\mathcal{T}})
+( \mathcal{R}(\mathbf{x}_{i}) - \bar{\mathcal{R}}
+)}{\sqrt{\sum_{i\in\Omega}
+(\mathcal{T}(\mathbf{y}(\mathbf{x}_{i};\mathbf{w})) -
+\bar{\mathcal{T}})^{2} ( \mathcal{R}(\mathbf{x}_{i}) -
+\bar{\mathcal{R}})^2}}\)</span>
+</p>
+<p>
+<span class="math inline">\(\bar{\mathcal{T}} =
+\frac{1}{|\Omega|}\sum_{i\in\Omega}
+\mathcal{T}(\mathbf{y}(\mathbf{x}_{i};\mathbf{w}))\)</span>
+</p>
+<p>
+<span class="math inline">\(\bar{\mathcal{R}} =
+\frac{1}{|\Omega|}\sum_{i\in\Omega} \mathcal{R}(\mathbf{x}_{i})\)</span>
+</p></li>
+</ul>
+</section>
+</section>
+<section id="inter-modality-registration" class="slide level1">
+<h1>Inter-modality registration</h1>
+<div class="r-stack">
+<div>
+<img src="./media/inter_modality_reg1.png" class="r-stretch fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/inter_modality_reg2.png" class="r-stretch fragment fade-in-then-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/inter_modality_reg3.png" class="r-stretch fragment fade-in-then-out" data-fragment-index="1">
+</div>
+<div>
+<img src="./media/inter_modality_reg4.png" class="r-stretch fragment fade-in" data-fragment-index="2">
+</div>
+</div>
+</section>
+<section id="inter-modality-registration-1" class="slide level1">
+<h1>Inter-modality registration</h1>
+<section data-state="slide17">
+<ul>
+<li>Idea: build a joint histogram
+<div class="r-hstack" style="transform:translate(-20%,0%)">
+<div style="transform:translate(100%,430%) rotate(35deg); width:200px">
+<span style="font-size:16pt">Intensity in <span
+class="math inline">\(\mathcal{T}\)</span></span>
+</div>
+<img src="./media/2d_hist.png" height="400px" id="hist2d">
+<div style="transform:translate(-80%,440%) rotate(-22deg);width:200px">
+<span style="font-size:16pt">Intensity in <span
+class="math inline">\(\mathcal{R}\)</span></span>
+</div>
+<div class="r-vstack">
+<div class="r-hstack" style="transform:translate(40%,0%)">
+<img src="./media/2d_hist_t1.png" height="150px" id="T1">
+<p>
+<span class="math inline">\(\mathcal{T}\)</span>
+</p>
+</div>
+<div id="T2" class="r-hstack" style="transform:translate(40%,0%)">
+<img src="./media/2d_hist_t2.png" height="150px">
+<p>
+<span class="math inline">\(\mathcal{R}\)</span>
+</p>
+</div>
+</div>
+</div></li>
+</ul>
+</section>
+</section>
+<section id="inter-modality-registration-2" class="slide level1">
+<h1>Inter-modality registration</h1>
+<ul>
+<li>Idea: build a joint histogram
+<div class="r-hstack">
+<div class="r-hstack">
+<div class="r-vstack">
+<div style="transform:translate(-100%,-75%);">
+<p style="color:blue;">
+MRI
+</p>
+</div>
+<div style="transform:translate(-120%,60%);">
+<p style="color:red;">
+CT
+</p>
+</div>
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/mri_ct_1d.png" width="350px" style="transform:translate(-10%,0%)" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/mri_ct_1d_1.png" width="350px" style="transform:translate(-10%,0%)" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</div>
+<div class="r-hstack">
+<div style="transform:translate(180%,400%); width:100px;z-index:200">
+<span style="font-size:18pt;color:blue">MRI</span>
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/mri_ct_2d.png" width="400px" style="transform:translate(10%,0%)" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/mri_ct_2d_1.png" width="400px" style="transform:translate(10%,0%)" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+<div style="transform:translate(-40%,480%); width:100px;z-index:200">
+<span style="font-size:18pt;color:red">CT</span>
+</div>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="section" class="slide level1">
+<h1></h1>
+<div class="r-stack">
+<div>
+<img src="./media/mr_ct_big_hist_2d.png" width="75%" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/mr_ct_big_hist_2d_1.png" width="75%" class="fragment fade-in" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/mri_ct_side_to_side.png" width="350px" style="transform:translate(0%,-120%)" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/mri_ct_side_to_side_1.png" width="350px" style="transform:translate(0%,-100%)" class="fragment fade-in" data-fragment-index="0">
+</div>
+<div
+style="transform:translate(-60%,-100%) rotate(-21deg); width:200px;z-index:200">
+<span style="font-size:16pt;">CT intensities</span>
+</div>
+<div
+style="transform:translate(-100%,540%) rotate(35deg); width:200px;z-index:200">
+<span style="font-size:16pt;">MR intensities</span>
+</div>
+<div class="fragment fade-in"
+style="height:127px;width:32%;border:3px solid red;float:center;transform:translate(0%,-167%)"
+data-fragment-index="0">
+
+</div>
+</div>
+</section>
+<section id="section-1" class="slide level1">
+<h1></h1>
+<div class="r-stack">
+<div>
+<img src="./media/T2_hist2d.png" width="500px" class="fragment fade-out" data-fragment-index="0" style="transform:translate(0%,30%)">
+</div>
+<div>
+<img src="./media/T2_hist2d_1.png" width="500px" class="fragment fade-in" data-fragment-index="0" style="transform:translate(0%,30%)">
+</div>
+<div class="r-hstack">
+<div>
+<img src="./media/2d_hist_t2.png" width="150px" style="transform:translate(0%,-120%)">
+</div>
+<div class="r-stack">
+<div>
+<img src="./media/2d_hist_t2.png" width="150px" style="transform:translate(0%,-120%)" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/2d_hist_t2.png" width="150px" style="transform:translate(0%,-90%)" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</div>
+<div class="fragment fade-in"
+style="height:115px;width:32%;border:3px solid red;float:center;transform:translate(0%,-152%)"
+data-fragment-index="0">
+
+</div>
+</div>
+</section>
+<section id="inter-modality-registration-entropy" class="slide level1">
+<h1>Inter-modality registration: entropy</h1>
+<section data-state="slide21">
+<div class="r-hstack">
+<img src="./media/entropy_bar_1.png" width="350px" id="entropy_bar_1">
+<div class="r-vstack">
+<p><img src="./media/entropy_bar_2.png" width="270px" id="entropy_bar_2" style="transform:translate(0%,10%)">
+<img src="./media/entropy_curve.png" width="400px" id="entropy_curve"></p>
+</div>
+<p><img src="./media/entropy_bar_3.png" width="350px" id="entropy_bar_3" style="margin-bottom:0px; margin-top:0px"></p>
+</div>
+<div style="transform:translate(0%,-50%)">
+<ul>
+<li>Also works for more than two outcomes</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="inter-modality-registration-3" class="slide level1">
+<h1>Inter-modality registration</h1>
+<ul>
+<li>Joint entropy <br>
+<p>
+<span class="math inline">\(\mathcal{D}_{\text{JE}}(\mathbf{w}) =
+H(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})),\mathcal{R}(\mathbf{x}_i))\)</span>
+</p>
+<br>
+<p>
+<span
+class="math inline">\(H(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})),\mathcal{R}(\mathbf{x}_i))
+= -\sum_{j,k}\text{PDF}(j,k)\log(\text{PDF}(j,k))\)</span>
+</p>
+<br>
+<p>
+<span class="math inline">\(\text{PDF}(j,k) =
+\frac{\text{HIST}(j,k)}{\sum_{j,k}\text{HIST}(j,k)}\)</span>
+</p>
+<br></li>
+</ul>
+</section>
+<section id="inter-modality-registration-4" class="slide level1">
+<h1>Inter-modality registration</h1>
+<ul>
+<li>Wait a minute…</li>
+</ul>
+<div class="r-stack">
+<div>
+<img src="./media/t1_wait_a_minute.png" width="300px" style="transform:translate(-60%,0%)">
+</div>
+<div>
+<img src="./media/ct_wait_a_minute.png" width="300px" style="transform:translate(50%,25%) rotate(30deg)">
+</div>
+<div
+style="height:50px;width:50px;border:3px solid red;float:center;transform:translate(-70%,240%)">
+
+</div>
+</div>
+</section>
+<section id="inter-modality-registration-5" class="slide level1">
+<h1>Inter-modality registration</h1>
+<ul>
+<li>Mutual information <br>
+<p>
+<span class="math inline">\(\mathcal{D}_{\text{MI}} =
+H(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})),\mathcal{R}(\mathbf{x}_i))
+- H(\mathcal{T}(\mathbf{y}(\mathbf{x}_i;\mathbf{w})))
+-H(\mathcal{R}(\mathbf{x}_i))\)</span>
+</p>
+<div class="r-hstack">
+<p><img src="./media/mi_2d_hist.png" width="350px" style="transform:translate(-30%,0%)">
+<img src="./media/mi_1d_hist_1.png" width="250px" style="transform:translate(0%,-20%)">
+<img src="./media/mi_1d_hist_2.png" width="250px" style="transform:translate(30%,-20%)"></p>
+</div></li>
+</ul>
+</section>
+<section id="inter-modality-registration-6" class="slide level1">
+<h1>Inter-modality registration</h1>
+<div class="r-stack">
+<div>
+<img src="./media/inter_modality_registration_curve.png" height="90%" class="fragment fade-out" data-fragment-index="0">
+</div>
+<div>
+<img src="./media/inter_modality_registration_curve_1.png" height="90%" class="fragment fade-in" data-fragment-index="0">
+</div>
+</div>
+</section>
+<section id="initialization" class="slide level1">
+<h1>Initialization?</h1>
+<div class="r-vstack">
+<img src="./media/initialization.png" height="300px">
+<div class="r-hstack fragment fade-in" data-fragment-index="0">
+<div class="r-vstack" style="transform:translate(-20%,0%)">
+<span style="font-size:16pt"><span
+class="math inline">\(\boldsymbol{\mu}_{\mathcal{R}} =
+\frac{\sum_{\Omega_{\mathcal{R}}}\mathcal{R}(\mathbf{x}_i)\mathbf{x}_i}{\sum_{\Omega_{\mathcal{R}}}\mathcal{R}(\mathbf{x}_i)}\)</span></span>
+<p>
+</p>
+<p><span style="font-size:16pt"><span
+class="math inline">\(\boldsymbol{\Sigma}_{\mathcal{R}} =
+\frac{\sum_{\Omega_{\mathcal{R}}}\mathcal{R}(\mathbf{x}_i)(\mathbf{x}_i
+- \boldsymbol{\mu}_{\mathcal{R}})(\mathbf{x}_i -
+\boldsymbol{\mu}_{\mathcal{R}})^T}{\sum_{\Omega_{\mathcal{R}}}\mathcal{R}(\mathbf{x}_i)}\)</span></span></p>
+</div>
+<div class="r-vstack" style="transform:translate(20%,0%)">
+<span style="font-size:16pt"><span
+class="math inline">\(\boldsymbol{\mu}_{\mathcal{T}} =
+\frac{\sum_{\Omega_{\mathcal{T}}}\mathcal{T}(\mathbf{y}_i)\mathbf{y}_i}{\sum_{\Omega_{\mathcal{T}}}\mathcal{T}(\mathbf{y}_i)}\)</span></span>
+<p>
+</p>
+<p><span style="font-size:16pt"><span
+class="math inline">\(\boldsymbol{\Sigma}_{\mathcal{T}} =
+\frac{\sum_{\Omega_{\mathcal{T}}}\mathcal{T}(\mathbf{y}_i)(\mathbf{y}_i
+- \boldsymbol{\mu}_{\mathcal{T}})(\mathbf{y}_i -
+\boldsymbol{\mu}_{\mathcal{T}})^T}{\sum_{\Omega_{\mathcal{T}}}\mathcal{T}(\mathbf{y}_i)}\)</span></span></p>
+</div>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/math/math.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script>
+
+    var arrow1Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'),{x: '0%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img1'),{x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow2Slide1 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img0'), {x: '100%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img2'), {x: '50%', y: '0%'}),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+    var arrow3Slide1 = new LeaderLine(
+      document.getElementById('img1'),
+      document.getElementById('img2'),
+      {color: 'black', path: 'straight', hide:'true'}
+    );
+
+
+    var arrow1Slide2 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img1_slide2'),{x: '50%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img2_slide2'),{x: '50%', y: '50%'}),
+      {color: 'yellow', path: 'arc', hide:'true', middleLabel: LeaderLine.pathLabel('?',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'}),  startPlug: 'arrow1'}
+    );
+    var arrow2Slide2 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('img2_slide2'), {x: '50%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('img3_slide2'), {x: '50%', y: '50%'}),
+      {color: 'yellow', path: 'arc', hide:'true', middleLabel: LeaderLine.pathLabel('?',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'}), startPlug: 'arrow1'}
+    );
+
+
+    var arrow1Slide6 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('similarity_measure'),'circle',{x: '25%', y: '15%', width:'80%', height:'100%'}),
+      LeaderLine.pointAnchor(document.getElementById('point_set_box'),{x: '50%', y: '0%'}),
+      {color: 'gray', path: 'straight', hide:'true', size:6}
+    );
+
+    var arrow1Slide8 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('similarity_measure_slide8'),'circle',{x: '25%', y: '15%', width:'80%', height:'100%'}),
+      LeaderLine.pointAnchor(document.getElementById('point_set_box_slide8'),{x: '50%', y: '0%'}),
+      {color: 'gray', path: 'straight', hide:'true', size:6, startSocket:'bottom'}
+    );
+
+    var line1Slide14 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('rminust'),'circle',{x: '79%', y: '15%', width:'4%', height:'100%'}),
+      LeaderLine.pointAnchor(document.getElementById('constant'),{x: '7%', y: '100%'}),
+      {color: 'blue', path: 'straight', hide:'true', size:6, startSocket:'top', endPlug:"behind"}
+    );
+
+    var line2Slide14 = new LeaderLine(
+      LeaderLine.areaAnchor(document.getElementById('rminust'),'circle',{x: '65%', y: '15%', width:'4%', height:'100%'}),
+      LeaderLine.pointAnchor(document.getElementById('constant'),{x: '7%', y: '100%'}),
+      {color: 'blue', path: 'straight', hide:'true', size:6, startSocket:'top', endPlug:"behind"}
+    );
+
+    var arrow1Slide17 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('T1'),{x: '30%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('hist2d'),{x: '53%', y: '45%'}),
+      {color: 'red', hide:'true'}
+    );
+
+    var arrow2Slide17 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('T2'),{x: '30%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('hist2d'),{x: '53%', y: '45%'}),
+      {color: 'blue',  hide:'true'}
+    );
+
+    var arrow1Slide21 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('entropy_bar_1'),{x: '90%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('entropy_curve'),{x: '28%', y: '30%'}),
+      {color: 'black', path:'straight', hide:'true'}
+    );
+
+    var arrow2Slide21 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('entropy_bar_2'),{x: '50%', y: '90%'}),
+      LeaderLine.pointAnchor(document.getElementById('entropy_curve'),{x: '51%', y: '7%'}),
+      {color: 'black', path:'straight', hide:'true'}
+    );
+
+    var arrow3Slide21 = new LeaderLine(
+      LeaderLine.pointAnchor(document.getElementById('entropy_bar_3'),{x: '10%', y: '50%'}),
+      LeaderLine.pointAnchor(document.getElementById('entropy_curve'),{x: '75%', y: '30%'}),
+      {color: 'black', path:'straight', hide:'true'}
+    );
+
+    var currentSlide
+    Reveal.on( 'slidechanged', event => {
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide1'){
+
+
+          currentSlide = '1';
+        arrow1Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)'
+          });
+          arrow2Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)' // translucent
+          });
+          arrow3Slide1.setOptions({
+            color: 'rgb(0, 0, 0)',
+            startPlugColor: 'rgb(0, 0, 0)',
+            endPlugColor: 'rgb(0, 0, 0)' // translucent
+          });
+          arrow1Slide1.position();
+          arrow2Slide1.position();
+          arrow3Slide1.position();
+          arrow1Slide1.show();
+          arrow2Slide1.show();
+          arrow3Slide1.show();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '1' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              arrow1Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow2Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow3Slide1.setOptions({
+                color: 'rgba(0, 0, 0, 0.5)',
+                startPlugColor: 'rgba(0, 0, 0., 0.5)',
+                endPlugColor: 'rgba(0, 0, 0, 0.5)' // translucent
+              });
+              arrow1Slide1.show();
+              arrow2Slide1.show();
+              arrow3Slide1.show();
+
+            }
+          });
+
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide1'){
+
+          arrow1Slide1.hide('none');
+          arrow2Slide1.hide('none');
+          arrow3Slide1.hide('none');
+
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide2'){
+
+        currentSlide = '2';
+          arrow1Slide2.position();
+          arrow2Slide2.position();
+
+          arrow1Slide2.middleLabel = LeaderLine.pathLabel('?',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'});
+          arrow2Slide2.middleLabel = LeaderLine.pathLabel('?',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'});
+
+          arrow1Slide2.show();
+          arrow2Slide2.show();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '2' && event.fragment.getAttribute('data-fragment-index') == 0){
+
+              arrow1Slide2.middleLabel = LeaderLine.pathLabel('!',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'});
+              arrow2Slide2.middleLabel = LeaderLine.pathLabel('!',{color: 'yellow', lineOffset:24, outlineColor:'', fontSize:'32pt'});
+              arrow1Slide2.show();
+              arrow2Slide2.show();
+            }
+          });
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide2'){
+
+          arrow1Slide2.hide('none');
+          arrow2Slide2.hide('none');
+
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide3'){
+        currentSlide = '3';
+
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide4'){
+          currentSlide = '4'
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide6'){
+
+          arrow1Slide6.hide('none');
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide6'){
+
+
+          currentSlide = '6'
+          arrow1Slide6.position();
+          arrow1Slide6.show();
+      }
+
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide8'){
+
+          arrow1Slide8.hide('none');
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide8'){
+
+
+          currentSlide = '8'
+          arrow1Slide8.position();
+          arrow1Slide8.show();
+      }
+
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide9'){
+          currentSlide = '9'
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide14'){
+
+          line1Slide14.hide('none');
+          line2Slide14.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide14'){
+
+        currentSlide = '14';
+          line1Slide14.position();
+          line2Slide14.position();
+
+          Reveal.on( 'fragmentshown', event => {
+            if(currentSlide == '14' && event.fragment.getAttribute('data-fragment-index') == 0){
+              line1Slide14.show();
+              line2Slide14.show();
+            }
+          });
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide15'){
+          currentSlide = '15'
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide17'){
+
+          arrow1Slide17.hide('none');
+          arrow2Slide17.hide('none');
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide17'){
+
+        currentSlide = '17';
+          arrow1Slide17.position();
+          arrow2Slide17.position();
+          arrow1Slide17.show();
+          arrow2Slide17.show();
+      }
+
+      if(event.previousSlide.getAttribute('data-state') == 'slide21'){
+
+          arrow1Slide21.hide('none');
+          arrow2Slide21.hide('none');
+          arrow3Slide21.hide('none');
+
+      }
+
+      if(event.currentSlide.getAttribute('data-state') == 'slide21'){
+
+        currentSlide = '21';
+          arrow1Slide21.position();
+          arrow2Slide21.position();
+          arrow3Slide21.position();
+          arrow1Slide21.show();
+          arrow2Slide21.show();
+          arrow3Slide21.show();
+      }
+    });
+
+    var translation_slider = document.getElementById("translation_slider");
+
+
+    translation_slider.oninput = function() {
+
+      var translate_grid = document.getElementById('translate_grid')
+      translate_grid.setAttribute('style','transform:translate(0px,'+this.value+'px)');
+
+    };
+
+
+    var translation_slider = document.getElementById("rotation_slider");
+
+    rotation_slider.oninput = function() {
+
+      var rotate_grid = document.getElementById('rotate_grid')
+      rotate_grid.setAttribute('style','transform:translate(10px,-20px) rotate(' + this.value + 'deg); transform-origin: center;');
+
+    };
+
+
+    var scale_slider = document.getElementById("scale_slider");
+
+    scale_slider.oninput = function() {
+
+      var scale_grid = document.getElementById('scale_grid')
+      scale_grid.setAttribute('style','transform: scale('+ this.value +') rotate(20deg) translate(20%,-20%);');
+
+    };
+
+
+    var skew_slider = document.getElementById("skew_slider");
+
+    skew_slider.oninput = function() {
+
+      var skew_grid = document.getElementById('skew_grid')
+      skew_grid.setAttribute('style','transform:scale(0.8, 1.2) rotate(10deg) translate(20%,-20%) skewX('+ this.value + 'deg);');
+
+    };
+
+    </script>
+
+    <svg style="display: none" version="2.0">
+    <defs>
+    <symbol id="trans_grid" viewBox="0 0 4.4 4.4" style="width: 300px; display: block; margin: 10px auto; border: 0px solid #0b82b3;">
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="0.2" x2="4.2" y2="0.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="0.2" x2="0.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.2" y1="0.2" x2="1.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.2" y1="0.2" x2="2.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.2" y1="0.2" x2="3.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="4.2" y1="0.2" x2="4.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="1.2" x2="4.2" y2="1.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="2.2" x2="4.2" y2="2.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="3.2" x2="4.2" y2="3.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="4.2" x2="4.2" y2="4.2"/>
+    <circle cx="0.2" cy="0.2" r=".1"/>
+    <circle cx="1.2" cy="0.2" r=".1"/>
+    <circle cx="2.2" cy="0.2" r=".1"/>
+    <circle cx="3.2" cy="0.2" r=".1"/>
+    <circle cx="4.2" cy="0.2" r=".1"/>
+    <circle cx="0.2" cy="1.2" r=".1"/>
+    <circle cx="1.2" cy="1.2" r=".1"/>
+    <circle cx="2.2" cy="1.2" r=".1"/>
+    <circle cx="3.2" cy="1.2" r=".1"/>
+    <circle cx="4.2" cy="1.2" r=".1"/>
+    <circle cx="5.2" cy="1.2" r=".1"/>
+    <circle cx="0.2" cy="2.2" r=".1"/>
+    <circle cx="1.2" cy="2.2" r=".1"/>
+    <circle cx="2.2" cy="2.2" r=".1"/>
+    <circle cx="3.2" cy="2.2" r=".1"/>
+    <circle cx="4.2" cy="2.2" r=".1"/>
+    <circle cx="0.2" cy="3.2" r=".1"/>
+    <circle cx="1.2" cy="3.2" r=".1"/>
+    <circle cx="2.2" cy="3.2" r=".1"/>
+    <circle cx="3.2" cy="3.2" r=".1"/>
+    <circle cx="4.2" cy="3.2" r=".1"/>
+    <circle cx="0.2" cy="4.2" r=".1"/>
+    <circle cx="1.2" cy="4.2" r=".1"/>
+    <circle cx="2.2" cy="4.2" r=".1"/>
+    <circle cx="3.2" cy="4.2" r=".1"/>
+    <circle cx="4.2" cy="4.2" r=".1"/>
+    </symbol>
+    </defs>
+    <use href="#trans_grid"/>
+    </svg>
+
+    <svg style="display: none" version="2.0">
+    <defs>
+    <symbol id="deformed_grid" viewBox="0 0 4.4 4.4" style="width: 300px; display: block; margin: 10px auto; border: 0px solid #0b82b3;">
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="0.2" x2="0.9" y2="0.4"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.9" y1="0.4" x2="2.0" y2="0.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.0" y1="0.6" x2="3.0" y2="0.7"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="0.7" x2="4.0" y2="0.3"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="0.2" x2="0.5" y2="1.4"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.9" y1="0.4" x2="1.3" y2="1.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.0" y1="0.6" x2="2.2" y2="1.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="0.7" x2="3.0" y2="1.8"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="4.0" y1="0.3" x2="4.1" y2="1.4"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.5" y1="1.4" x2="1.3" y2="1.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.3" y1="1.6" x2="2.2" y2="1.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.2" y1="1.6" x2="3.0" y2="1.8"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="1.8" x2="4.1" y2="1.4"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.5" y1="1.4" x2="0.3" y2="2.4"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.3" y1="1.6" x2="1.0" y2="2.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.2" y1="1.6" x2="1.9" y2="2.5"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="1.8" x2="3.0" y2="2.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="4.1" y1="1.4" x2="3.9" y2="2.2"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.3" y1="2.4" x2="1.0" y2="2.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.0" y1="2.2" x2="1.9" y2="2.5"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.9" y1="2.5" x2="3.0" y2="2.6"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="2.6" x2="3.9" y2="2.2"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.3" y1="2.4" x2="0.2" y2="3.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.0" y1="2.2" x2="1.2" y2="3.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.9" y1="2.5" x2="2.2" y2="3.5"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.0" y1="2.6" x2="3.2" y2="3.7"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.9" y1="2.2" x2="4.2" y2="3.2"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="3.2" x2="1.2" y2="3.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.2" y1="3.2" x2="2.2" y2="3.5"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.2" y1="3.5" x2="3.2" y2="3.7"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.2" y1="3.7" x2="4.2" y2="3.2"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.2" y1="3.2" x2="0.6" y2="3.9"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.2" y1="3.2" x2="1.2" y2="3.8"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.2" y1="3.5" x2="2.0" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.2" y1="3.7" x2="3.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="4.2" y1="3.2" x2="4.2" y2="4.0"/>
+
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="0.6" y1="3.9" x2="1.2" y2="3.8"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="1.2" y1="3.8" x2="2.0" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="2.0" y1="4.2" x2="3.2" y2="4.2"/>
+    <line style="fill: none; stroke: #0b82b3; stroke-width: 0.1px; stroke-opacity: 1;" x1="3.2" y1="4.2" x2="4.2" y2="4.0"/>
+
+    <circle cx="0.2" cy="0.2" r=".1"/>
+    <circle cx="0.9" cy="0.4" r=".1"/>
+    <circle cx="2.0" cy="0.6" r=".1"/>
+    <circle cx="3.0" cy="0.7" r=".1"/>
+    <circle cx="4.0" cy="0.3" r=".1"/>
+
+    <circle cx="0.5" cy="1.4" r=".1"/>
+    <circle cx="1.3" cy="1.6" r=".1"/>
+    <circle cx="2.2" cy="1.6" r=".1"/>
+    <circle cx="3.0" cy="1.8" r=".1"/>
+    <circle cx="4.1" cy="1.4" r=".1"/>
+
+    <circle cx="0.3" cy="2.4" r=".1"/>
+    <circle cx="1.0" cy="2.2" r=".1"/>
+    <circle cx="1.9" cy="2.5" r=".1"/>
+    <circle cx="3.0" cy="2.6" r=".1"/>
+    <circle cx="3.9" cy="2.2" r=".1"/>
+
+    <circle cx="0.2" cy="3.2" r=".1"/>
+    <circle cx="1.2" cy="3.2" r=".1"/>
+    <circle cx="2.2" cy="3.5" r=".1"/>
+    <circle cx="3.2" cy="3.7" r=".1"/>
+    <circle cx="4.2" cy="3.2" r=".1"/>
+
+
+    <circle cx="0.6" cy="3.9" r=".1"/>
+    <circle cx="1.2" cy="3.8" r=".1"/>
+    <circle cx="2.0" cy="4.2" r=".1"/>
+    <circle cx="3.2" cy="4.2" r=".1"/>
+    <circle cx="4.2" cy="4.0" r=".1"/>
+    </symbol>
+    </defs>
+    <use href="#deformed_grid"/>
+    </svg>
+    </body>
+</html>
