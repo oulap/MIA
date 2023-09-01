@@ -20,7 +20,12 @@ Below is a guide on how to create a python environment with all necessary packag
      - jupyter opens in your browser and you can edit and create your local notebooks here
      - make sure to select the correct kernel "mia", that you just created, under Kernel > Change kernel
 7. Export code and comment sections of notebook to pdf
-     - Simplest option: print an html version of the notebook. In the open jupyter notebook, click File > Print Preview. A new html page opens, which you can print to pdf from your browser.
-     - If you have Latex locally installed on your machine: Under File > Download as > ... are also more options to export the notebook. You can use the option File > Download as > PDF via Latex. This will look slightly nicer. You might need to install additional latex packages.
+     - Simplest option: print an HTML version of the notebook. In the open jupyter notebook, click File > Print Preview. A new html page opens, which you can print to pdf from your browser.
+     - There is also the option to convert the notebook directly to pdf. The first time, run the following command in the terminal
+
+     jupyter nbconvert --to webpdf --allow-chromium-download <path_to_notebook>/IntroToPython.ipynb
+
+     After that, simply choose File > Download as > PDF via HTML.
+     - If you have Latex locally installed: Under File > Download as > are also more options to export the notebook. You can use the option File > Download as > PDF via Latex. This will look slightly nicer. You might need to install additional latex packages.
      - An even more advanced version would be to download the notebook as Latex code (File > Download as > Latex (.tex)). This is useful if you want to create the rest of the report in latex and embed the code in your .tex file. Again, you need Latex installed on your machine to use this option
      - Finally, save the pdf and submit the report on your university's course site
