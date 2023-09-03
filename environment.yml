@@ -1,0 +1,13 @@
+name: env_mia
+channels:
+- default
+dependencies:
+- python=3.9
+- numpy
+- scipy
+- matplotlib
+- nibabel
+- jupyter
+- ipykernel
+- nbconvert[webpdf]
+- pyppeteer
