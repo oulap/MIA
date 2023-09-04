@@ -1,6 +1,7 @@
 name: env_mia
 channels:
 - default
+- conda-forge
 dependencies:
 - python=3.9
 - numpy
