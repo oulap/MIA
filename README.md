@@ -15,7 +15,7 @@ Below is a guide on how to create a python environment with all necessary packag
      - type: conda env create -f <path_to_file>/environment.yml
      - type: conda activate env_mia
 5. Create jupyter kernel and open a notebook
-     - type: python -m ipykernel install --user --name=mia
+     - type: python -m ipykernel install --user --name=mia (only one time installation)
      - type: jupyter notebook
      - jupyter opens in your browser and you can edit and create your local notebooks here
      - make sure to select the correct kernel "mia", that you just created, under Kernel > Change kernel
