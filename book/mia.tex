@@ -102,7 +102,7 @@ $$
 as its prediction, where 
 % $\fat{w} = (w_0, \ldots, w_D)\transp$ 
 $w_0, \ldots, w_D$
-are tunable weights that need to be estimatated from the 
+are tunable weights that need to be estimated from the 
 % $N$ 
 available measurements.
 %
@@ -120,7 +120,7 @@ y( \fat{x}, \fat{w} ) = \sum_{m=0}^{M-1} w_m \phi_m( \fat{x} ),
 \end{equation}
 where $\fat{w} = (w_0, \ldots, w_{M-1})\transp$ are $M$ tunable parameters.
 
-In order to find suitable values of the parameters of the model, the following energy can be minimzed with respect to $\fat{w}$:
+In order to find suitable values of the parameters of the model, the following energy can be minimized with respect to $\fat{w}$:
 $$
 E( \fat{w} ) = \sum_{n=1}^N 
                \left( t_n - \sum_{m=0}^{M-1} w_m \phi_m(\fat{x}_n) \right)^2
@@ -416,7 +416,7 @@ $$
 $$
 is a $N \times N$ ``smoothing'' matrix that transforms a noisy signal $\fat{t}$ into a ``denoised'' signal $\fat{\hat{t}}$ by making linear combinations of the elements in $\fat{t}$. The $n$-th row of $\fat{S}$ contains the weights assigned to the various elements of $\fat{t}$ in the computation of $\hat{t}_n$, as illustrated in Fig.~\ref{fig:smoothing1D} (bottom row).
 
-The amount of smoothing that is applied can be controlled by both the number of basis functions $M$ and the regularization parameter $\lambda$: chosing higher $M$ or lower $\lambda$ will produce less smoothing. 
+The amount of smoothing that is applied can be controlled by both the number of basis functions $M$ and the regularization parameter $\lambda$: choosing higher $M$ or lower $\lambda$ will produce less smoothing. 
 This effect is illustrated in Fig.~\ref{fig:smoothing1D}.
 In the limit, when $M = N$ and $\lambda = 0$, $\fat{S}$ becomes the identify matrix%
 \footnote{Because $\bldgr{\Phi}$ is square when $M=N$, so that $( \bldgr{\Phi}\transp \bldgr{\Phi} )^{-1} = \bldgr{\Phi}^{-1} (\bldgr{\Phi}\transp)^{-1}$.}
@@ -454,7 +454,7 @@ and no smoothing is applied at all.
      \label{fig:smoothing_M28_gamma1000}
   \end{subfigure}
   \caption{Smoothing of a 1D signal when the number of basis functions ($M$) and the regularization strength ($\gamma$) is varied. 
-  The regularizer is of the form $\bldgr{\Omega} = \bldgr{\Gamma} \bldgr{\Phi}$, where $\bldgr{\Gamma}$ computes second-order finite differences (the $n$-th row has all zeros except for columns $n-1$, $n$ and $n+1$, who have elements -1, 2 and -1, respectively). From top to bottom: basis functions that were used; noisy signal $\fat{t}$ and denoised signal $\fat{\hat{t}}$ in blue and red, respectively; smooting matrix $\fat{S}$; and the middle row of $\fat{S}$.
+  The regularizer is of the form $\bldgr{\Omega} = \bldgr{\Gamma} \bldgr{\Phi}$, where $\bldgr{\Gamma}$ computes second-order finite differences (the $n$-th row has all zeros except for columns $n-1$, $n$ and $n+1$, who have elements -1, 2 and -1, respectively). From top to bottom: basis functions that were used; noisy signal $\fat{t}$ and denoised signal $\fat{\hat{t}}$ in blue and red, respectively; smoothing matrix $\fat{S}$; and the middle row of $\fat{S}$.
   }
   \label{fig:smoothing1D}
 \end{figure}
@@ -551,11 +551,11 @@ t_{N_1,N_2}
 .
 \label{eq:vec}
 \end{equation}
-In this re-arrangment, element $t_{{n_1},{n_2}}$ in $\fat{T}$ corresponds to element $t_n$ in $\fat{t}$, where $n = n_1 + (n_2-1) N_1$.
+In this re-arrangement, element $t_{{n_1},{n_2}}$ in $\fat{T}$ corresponds to element $t_n$ in $\fat{t}$, where $n = n_1 + (n_2-1) N_1$.
 
 %
 In order to proceed, we also need to choose appropriate basis functions 
-$\phi_m(\fat{x})$ that work in 2D. A convenient choice is often \emph{separable} basis functions, which are simply the product of two 1D basis funcions (one taking as input $x_1$, and the other one $x_2$). If there are $M_1$ basis functions in the first (row) direction, and $M_2$ in the second (column) direction, 
+$\phi_m(\fat{x})$ that work in 2D. A convenient choice is often \emph{separable} basis functions, which are simply the product of two 1D basis functions (one taking as input $x_1$, and the other one $x_2$). If there are $M_1$ basis functions in the first (row) direction, and $M_2$ in the second (column) direction, 
 taking all the combinations yields 
 a total of $M = M_1 M_2$ basis functions in 2D, given by
 \begin{equation}
@@ -906,7 +906,7 @@ So far we have taken a rather cavalier attitude regarding the spatial locations 
   % T1: (256, 256, 150), 0.937500, 0.937500, 1.200000, sagittal.
   % T2: 256 x 256 x 28, 0.898438, 0.898438, 4.977778, axial
   Two MR images acquired within the same scan session: T1-weighted (left) and T2-weighted (right).
-  Although the two images show corresponding structures in corresponding locations in \emph{world coordinates} (\subref{fig:voxelVsWorldCoordinates_world}), the 3D array of image intensities acquird by the scanner is actually very different between the two scans: The T1-weighted scan is a $256 \times 256 \times 150$ volume with voxel size $0.94 \times 0.94 \times 1.2\ mm^3$ acquired in the sagittal direction, whereas T2-weighted scan is a $256 \times 256 \times 28$ volume with voxel size $0.90 \times 0.90 \times 4.98\ mm^3$ acquired in the axial direction.
+  Although the two images show corresponding structures in corresponding locations in \emph{world coordinates} (\subref{fig:voxelVsWorldCoordinates_world}), the 3D array of image intensities acquired by the scanner is actually very different between the two scans: The T1-weighted scan is a $256 \times 256 \times 150$ volume with voxel size $0.94 \times 0.94 \times 1.2\ mm^3$ acquired in the sagittal direction, whereas T2-weighted scan is a $256 \times 256 \times 28$ volume with voxel size $0.90 \times 0.90 \times 4.98\ mm^3$ acquired in the axial direction.
   This is clearly visible when displaying the two images in \emph{voxel coordinates} instead (\subref{fig:voxelVsWorldCoordinates_voxel}).
   }
   \label{fig:voxelVsWorldCoordinates}
@@ -917,7 +917,7 @@ In order to
 relate 
 multiple images 
 % of the same anatomy 
-to each other, we'll need to differentiate the concept of ``voxel coordinates'' (which are defined in integers units, and index indivual voxels in a 3D image grid) from that of 
+to each other, we'll need to differentiate the concept of ``voxel coordinates'' (which are defined in integers units, and index individual voxels in a 3D image grid) from that of 
 ``world coordinates'' (indicating the spatial positions of voxels in the real world, and measured in mm).
 %
 Specifically, let $\fat{v} = (v_1, v_2, v_3)\transp$ denote the voxel coordinate of a voxel in an image of size $N_1 \times N_2 \times N_3$, where $v_d = 0, \ldots N_d-1$ for 
@@ -1035,7 +1035,7 @@ v_3 \\
 \label{eq:affineMatrix}
 \end{equation}
 where the $4 \times 4$ matrix $\fat{M}$ is called an \emph{affine} matrix.
-This technique, which uses so-called homogeneous coordinates (vectors are augmented with a $1$ at the end), absorbes the addtion of the vector $\fat{t}$ into a single matrix multiplication, which makes concatenating several affine matrices very easy:  
+This technique, which uses so-called homogeneous coordinates (vectors are augmented with a $1$ at the end), absorbs the addition of the vector $\fat{t}$ into a single matrix multiplication, which makes concatenating several affine matrices very easy:  
 the mapping of $\fat{v}_{T1}$ to $\fat{v}_{T2}$ is given by:
 $$
 \left(
@@ -1156,7 +1156,7 @@ $\fat{A}$.
 %
 This transformation model is called the \emph{affine} transformation model.
 %
-Referrring to~\eqref{eq:mapping},
+Referring to~\eqref{eq:mapping},
 the $d$-th coordinate of points mapped into the moving image is therefore given by the linear function
 \begin{equation}
 y_d( \fat{x}, \fat{w}_d ) = t_d + a_{d,1} x_1 + \ldots + a_{d,D} x_D 
@@ -1213,7 +1213,7 @@ where $\fat{M}_F$ and $\fat{M}_M$ denote the voxel-to-world affine matrix of the
 
 \paragraph{Rigid transformation:}
 
-In situations where the moving and the fixed image were both taken from the same rigid structure (e.g, the head) in the same subject, the ability of the affine transformation model to arbitrarily scale and skew images becomes a liabilty. In those cases, a model that can only account for a translation and a rotation is more appropriate:
+In situations where the moving and the fixed image were both taken from the same rigid structure (e.g, the head) in the same subject, the ability of the affine transformation model to arbitrarily scale and skew images becomes a liability. In those cases, a model that can only account for a translation and a rotation is more appropriate:
 $$
 \fat{y}( \fat{x}, \fat{w} ) = \fat{R} \fat{x} + \fat{t},
 $$
@@ -1307,7 +1307,7 @@ y_d( \fat{x}, \fat{w}_d ) = x_d + \delta(\fat{x}, \fat{w}_d),
 .
 \label{eq:deformableOneDirection}
 \end{equation}
-Here $\phi_m(\fat{x})$ are $M$ basis functions, which are typically taken to be \emph{seperable} (cf.~\eqref{eq:basisFunction2D} and Fig.~\ref{fig:basisFunctions2D_BSpline}),
+Here $\phi_m(\fat{x})$ are $M$ basis functions, which are typically taken to be \emph{separable} (cf.~\eqref{eq:basisFunction2D} and Fig.~\ref{fig:basisFunctions2D_BSpline}),
 with weights $\fat{w}_d = (w_{d,0}, \ldots w_{d,M-1})\transp$.
 %
 The interpretation of these weights is that, when they are all set to zero (i.e., when $\fat{w}_d = \fat{0}$), the deformation $\delta$ is also zero and no deformation is applied.
@@ -1333,7 +1333,7 @@ E(\fat{w})
 \sum_{n=1}^N \| \fat{y}_n - \fat{y}( \fat{x}_n, \fat{w} ) \|^2
 $$
 with respect to the transformation parameters $\fat{w}$. 
-Here $\| \fat{a} - \fat{b}\|^2 = \sum_{d=1}^D (a_1-b_1)^ 2$ measures the squared Eucledian distance between two points $\fat{a}$ and $\fat{b}$.
+Here $\| \fat{a} - \fat{b}\|^2 = \sum_{d=1}^D (a_1-b_1)^ 2$ measures the squared Euclidean distance between two points $\fat{a}$ and $\fat{b}$.
 
 \paragraph{Affine transformation:}
 %
@@ -1534,7 +1534,7 @@ E(\fat{w})
 \label{eq:SSD}
 \end{equation}
 Here, $\fat{x}_n$ are the world coordinates of the voxels in the \emph{fixed} image, and $\mathcal{F}(\fat{x}_n)$ denotes the image intensity of those voxels.
-Similary, $\mathcal{M}( \fat{y}( \fat{x}_n, \fat{w} ) )$ denotes the image intensities in the \emph{moving} image, evaluated at the mapped locations $\fat{y}( \fat{x}_n, \fat{w} )$. Since these will generally fall in between original voxel locations in the moving image, image interpolation will be required (cf.~Sec.~\ref{sec:interpolationIn2D}). When the mapped location falls \emph{outside} of the image area of the moving image, a constant intensity will typically be assigned (for instance zero).
+Similarly, $\mathcal{M}( \fat{y}( \fat{x}_n, \fat{w} ) )$ denotes the image intensities in the \emph{moving} image, evaluated at the mapped locations $\fat{y}( \fat{x}_n, \fat{w} )$. Since these will generally fall in between original voxel locations in the moving image, image interpolation will be required (cf.~Sec.~\ref{sec:interpolationIn2D}). When the mapped location falls \emph{outside} of the image area of the moving image, a constant intensity will typically be assigned (for instance zero).
 
 \subsubsection{Gauss-Newton optimization}
 %
@@ -1714,7 +1714,7 @@ y_d( \fat{x}, \fat{w}_d ) = x_d + \epsilon(\fat{x}, \fat{w}_d),
 \clearpage
 \subsection{Mutual Information}
 
-When two images need to be aligned that were acquired with two different imaging modalities (e.g., CT vs.~MR, or MR vs.~PET), the intensity characteristics of most anatomical structures will generally be quite diferent between the two images. This precludes the use of the sum-of-squared-differences energy as a registration criterion.
+When two images need to be aligned that were acquired with two different imaging modalities (e.g., CT vs.~MR, or MR vs.~PET), the intensity characteristics of most anatomical structures will generally be quite different between the two images. This precludes the use of the sum-of-squared-differences energy as a registration criterion.
 
 In such situations, fully automatic registrations can still be obtained by optimizing the \emph{Mutual Information} (MI) between the two images~\cite{wells1996multi,maes1997multimodality}. 
 % 
@@ -1812,7 +1812,7 @@ A key insight for registration purposes is that the joint histogram will typical
 % $(f,m)$ 
 encountered
 intensity combinations $(f,m)$ will be concentrated in just a few histogram bins.
-In constrast, when the images are moved out of alignment, intensity pairs will become more variable, ``smearing out'' the counts from high-count histogram entries into (what were previously) low-count bins. This process is illustrated in Fig.~\ref{fig:registration_histograms_blurring}.
+In contrast, when the images are moved out of alignment, intensity pairs will become more variable, ``smearing out'' the counts from high-count histogram entries into (what were previously) low-count bins. This process is illustrated in Fig.~\ref{fig:registration_histograms_blurring}.
 %
 This phenomenon can be exploited to define the 
 % \emph{joint entropy} as a an energy to drive the registration process:
@@ -1870,7 +1870,7 @@ Applied to our registration setting, the joint entropy will be higher when the j
 %
 One problem with using the joint entropy is that it attains low values not just when registrations are good, but also when some non-desirable trivial solutions are found. As an example, consider the scenario where $\fat{w}$ is so that the fixed image and the moving image only overlap in a region in the background. In most implementations, the joint histogram is only computed from this overlapping region, as explained before, and therefore the only intensity pair with a non-zero count will be the one where both $f$ and $m$ are zero. The joint entropy for this solution will be zero, which is its lowest possible value.
 
-In order to avoid such pathologoical solutions, it is customary to alter the energy as follows:
+In order to avoid such pathological solutions, it is customary to alter the energy as follows:
 \begin{equation}
 E(\fat{w}) = H_{F,M} - H_{F} - H_{M}
 ,
@@ -2917,7 +2917,7 @@ using the five 1D cosines of Fig.~\ref{fig:basisFunctions1D_DCT} as basis functi
   \caption{Example of a logistic regression classifier trained to discern pixels in the inner organs from pixels in other areas.
   (\subref{fig:logisticRegressionImageClassification_a}) Image to be segmented, along with training data consisting of 25 manually selected points inside ($l=1$, blue circles) and 25 points outside ($l=2$, red crosses) the area of interest. 
   (\subref{fig:logisticRegressionImageClassification_b}) The output $p( l=1 | d, \bldgr{\hat{\theta}} )$ of the trained classifier, evaluated in each pixel.
-  (\subref{fig:logisticRegressionImageClassification_c}) Final segmentation produced by the trained classifier, overlayed on top of the input image.
+  (\subref{fig:logisticRegressionImageClassification_c}) Final segmentation produced by the trained classifier, overlaid on top of the input image.
   (\subref{fig:logisticRegressionImageClassification_d}) The quantity $a$ of (\eqref{eq:activation}) for various intensity levels $d$.
   (\subref{fig:logisticRegressionImageClassification_e}) The classifier resulting from subjecting $a$ to the squashing function $\sigma(a)$ of (\eqref{eq:squashFunction}). For reference, the intensity levels and labels of the 50 training points are also shown.
   }
@@ -3038,7 +3038,7 @@ $\phi_m( \fat{x} )$ in our 9-dimensional input space.
 For low-dimensional cases (e.g., $D=2$ %) 
 or $D=3$) 
 we could follow the same procedure as in Sec~\ref{sec:smoothingAndInterpolationND} and use 
-\emph{separable} basis functions, which are simply the product of 1D basis funcions as in~\eqref{eq:basisFunction2D}.
+\emph{separable} basis functions, which are simply the product of 1D basis functions as in~\eqref{eq:basisFunction2D}.
 % 
 % For the five 1D cosines used in the earlier example (shown in Fig.~\ref{fig:basisFunctions1D_DCT}) this procedure would result in the 25 2D cosines shown in Fig.~\ref{fig:cosines2D}.
 However, 
