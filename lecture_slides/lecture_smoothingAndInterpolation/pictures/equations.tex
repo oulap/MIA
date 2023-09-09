@@ -1,0 +1,235 @@
+% \documentclass[fontsize=9pt,paper=letter,pagesize]{scrartcl} 
+\documentclass[10pt,twoside]{book}
+
+% Math notation stuff
+\newcommand{\bldgr}[1]{{\mbox{\boldmath {${#1}$}}}} % Bold for lower-case Greek letters
+\newcommand{\fat}[1]{\mathbf{#1}} % Bold for anything else
+%\newcommand{\transp}{^\textrm{\small T}} % Transpose
+\newcommand{\transp}{^T} % Transpose
+
+
+\begin{document}
+
+
+$$
+w
+$$
+
+$$
+E(w) = (5 - 4 w )^2 + (3 - 2 w )^2
+$$
+
+$$
+\frac{ d E(w) }{ d w}
+= 
+-8 (5 - 4 w ) - 4 (3 - 2 w )
+= 
+-52 + 40 w
+$$
+
+$$
+\frac{ d E(w) }{ d w}
+= 0
+\quad
+\Rightarrow
+\quad
+w = 1.3
+$$
+
+
+$$
+  \fat{t} = (2, 1, 3 )\transp
+$$
+
+$$
+  \bldgr{\Phi} = ( 1, 1, 1 )\transp
+$$
+
+
+$$
+  \fat{t} = \left(
+               \begin{array}{c}
+                 2 \\
+                 1 \\
+                 3
+               \end{array}
+             \right)
+$$
+
+$$
+             \bldgr{\Phi} = \left(
+               \begin{array}{c}
+                 1 \\
+                 1 \\
+                 1
+               \end{array}
+             \right)
+$$
+
+$$
+  \bldgr{\Phi} = \left(
+               \begin{array}{ccc}
+                 1 & 1 & 1\\
+                 1 & 2 & 4 \\
+                 1 & 3 & 9
+               \end{array}
+             \right)
+$$
+
+$$
+\bldgr{\Phi}\transp \fat{t} = 1 + 2 + 3 = 6
+$$ 
+
+$$
+\bldgr{\Phi}\transp\bldgr{\Phi} = 1^2 + 1^2 + 1^2 = 3
+$$
+
+$$
+\fat{w} = 3^{-1} 6 = 2
+$$
+
+
+\begin{eqnarray*}
+\fat{S} 
+% & = & \bldgr{\Phi} \left( \bldgr{\Phi}\transp \bldgr{\Phi} \right)^{-1} \bldgr{\Phi}\transp \\
+& = & \left(
+               \begin{array}{c}
+                 1 \\
+                 1 \\
+                 1
+               \end{array}
+             \right)
+   \cdot 3^{-1} \cdot          
+  \left(
+               \begin{array}{ccc}
+                 1 &
+                 1 &
+                 1
+               \end{array}
+             \right)            
+\\ 
+% & = &
+% 3^{-1} \cdot          
+% \left(
+%                \begin{array}{c}
+%                  1 \\
+%                  1 \\
+%                  1
+%                \end{array}
+%              \right)
+%   \left(
+%                \begin{array}{ccc}
+%                  1 &
+%                  1 &
+%                  1
+%                \end{array}
+%              \right)            
+% \\
+% & = & 
+% 3^{-1} \cdot          
+%   \left(
+%                \begin{array}{ccc}
+%                  1 & 1 & 1 \\
+%                  1 & 1 & 1 \\
+%                  1 & 1 & 1
+%                \end{array}
+%              \right)            
+% \\
+& = & 
+  \left(
+               \begin{array}{ccc}
+                 1/3 & 1/3 & 1/3 \\
+                 1/3 & 1/3 & 1/3 \\
+                 1/3 & 1/3 & 1/3
+               \end{array}
+             \right)            
+\end{eqnarray*}
+
+$$
+ \fat{\hat{t}}
+  = 
+%    \left(
+%                \begin{array}{ccc}
+%                  1/3 & 1/3 & 1/3 \\
+%                  1/3 & 1/3 & 1/3 \\
+%                  1/3 & 1/3 & 1/3
+%                \end{array}
+%              \right)            
+% \left(
+%                \begin{array}{c}
+%                  2 \\
+%                  1 \\
+%                  3
+%                \end{array}
+%              \right)
+% =
+\left(
+               \begin{array}{c}
+                 2 \\
+                 2 \\
+                 2
+               \end{array}
+             \right)
+$$
+
+$$ 
+  \left( \bldgr{\Phi}\transp \bldgr{\Phi} \right)^{-1} 
+  = \bldgr{\Phi}^{-1} \left( \bldgr{\Phi}\transp \right)^{-1}
+$$
+
+\begin{eqnarray*}
+  \fat{S} 
+%   & = & \bldgr{\Phi} \left( \bldgr{\Phi}\transp \bldgr{\Phi} \right)^{-1} \bldgr{\Phi}\transp
+%   \\
+  & = & 
+  \overbrace{
+  \bldgr{\Phi} \bldgr{\Phi}^{-1} }^{\fat{I}} 
+  \underbrace{
+  \left( \bldgr{\Phi}\transp \right)^{-1} \bldgr{\Phi}\transp }_{\fat{I}}
+  \\
+  & = &
+\left(
+               \begin{array}{ccc}
+                 1 & 0 & 0\\
+                 0 & 1 & 0 \\
+                 0 & 0 & 1
+               \end{array}
+             \right)
+\end{eqnarray*}
+
+$$
+\fat{S} 
+%   & = & \bldgr{\Phi} \left( \bldgr{\Phi}\transp \bldgr{\Phi} \right)^{-1} \bldgr{\Phi}\transp
+%   \\
+=
+  \overbrace{
+  \bldgr{\Phi} \bldgr{\Phi}^{-1} }^{\fat{I}} 
+  \underbrace{
+  \left( \bldgr{\Phi}\transp \right)^{-1} \bldgr{\Phi}\transp }_{\fat{I}}
+  \\
+=
+\left(
+               \begin{array}{ccc}
+                 1 & 0 & 0\\
+                 0 & 1 & 0 \\
+                 0 & 0 & 1
+               \end{array}
+             \right)
+$$
+
+$$
+\fat{\hat{t}} = \fat{t} 
+= \left(
+               \begin{array}{c}
+                 2 \\
+                 1 \\
+                 3
+               \end{array}
+             \right)
+$$
+
+
+\end{document}
+
+
+
