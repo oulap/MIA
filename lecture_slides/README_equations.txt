@@ -2,7 +2,7 @@ To get gorgeous transparent renderings of all your equations at the correct size
 
   cp /usr/share/doc/packages/latex2html/dot.latex2html-init ~/.latex2html-init
 
-and set MATH_SCALE_FACTOR to a large value (I used 4 as an example).
+and set MATH_SCALE_FACTOR to a large value (I used 3.79).
 
 Then run latex2html on the entire book:
 
