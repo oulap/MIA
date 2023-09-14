@@ -882,7 +882,7 @@ In order for images to be used this way, they need to be \emph{spatially aligned
 %  - "Getting from SPM world coordinates (mm) to voxel coordinates"
 %
 
-So far we have taken a rather cavalier attitude regarding the spatial locations of voxels (pixels in 3D): for 3D images we have simply assumed that we can index individual voxels by their location $\fat{x} = (x_1, x_2, x_3)\transp$, where $x_1$, $x_2$ and $x_3$ are integers. In reality, however, scanners can generate images with almost any voxel size (spacing between the voxels in each of the three dimensions) and in any orientation. In magnetic resonance imaging (MRI), for instance, it is not uncommon to acquire multiple images when a patient is inside the scanner, each defined on its own image grid. An example is shown in Fig.~\ref{fig:voxelVsWorldCoordinates} 
+So far we have taken a rather cavalier attitude regarding the spatial locations of voxels (pixels in 3D): for 3D images we have simply assumed that we can index individual voxels by their location $\fat{x} = (x_1, x_2, x_3)\transp$, where $x_1$, $x_2$ and $x_3$ are integers. In reality, however, scanners can generate images with almost any voxel size (spacing between the voxels in each of the three dimensions) and in any orientation. In magnetic resonance imaging (MRI), for instance, it is not uncommon to acquire multiple images when a patient is inside the scanner, each defined on its own image grid. An example is shown in Fig.~\ref{fig:voxelVsWorldCoordinates}.
 
 \begin{figure}
   \centering
@@ -1000,8 +1000,8 @@ $\{\fat{A}_{T1},\fat{t}_{T1}\}$,
 and one T2-weighted scan 
 with 
 $\{\fat{A}_{T2},\fat{t}_{T2}\}$.
-In order to compute the voxel coordinate $\fat{v}_{T2}$ in the T2-weighted scan corresponding to a s
-% pecific anatomical location with 
+In order to compute the voxel coordinate $\fat{v}_{T2}$ in the T2-weighted scan corresponding to a 
+%specific anatomical location with 
 voxel coordinate $\fat{v}_{T1}$ in the T1-weighed one, it is often convenient to re-write~\eqref{eq:coordinateSystem} as follows:
 \begin{equation}
 \left(
@@ -1236,8 +1236,8 @@ $$
 where $\alpha$ is a rotation angle.
 The parameters of this model are therefore $\fat{w} = (\alpha, t_1, t_2)\transp$. 
 In 3D there are many possible parametrizations of the rotation matrix, but one possibility is as follows:
-{
-\footnotesize
+{%
+\footnotesize%
 $$
 %\footnotesize
 \fat{R}
@@ -1266,7 +1266,7 @@ $$
 \end{array}
 \right)
 ,
-$$}
+$$}%
 where $\alpha$, $\beta$ and $\gamma$ are three rotation angles;
 the parameters of the model are then given by $\fat{w} = ( \alpha, \beta, \gamma, t_1, t_2, t_3 )\transp$.
 
@@ -1294,15 +1294,15 @@ to a nonlinear one.
 %
 %Furthermore,
 Since global differences in overall size and orientation have typically already been removed using a preceding affine registration\footnote{For instance by replacing the affine voxel-to-world mapping of the fixed image $\fat{M}_F$ by $\fat{M} \cdot \fat{M}_F$}, only the \emph{residual deformation} 
-% $\delta(\fat{x}, \fat{w}_d)$
-$\delta$
+% $\delta_d(\fat{x}, \fat{w}_d)$
+$\delta_d$
 is modeled:
 \begin{equation}
-y_d( \fat{x}, \fat{w}_d ) = x_d + \delta(\fat{x}, \fat{w}_d),
+y_d( \fat{x}, \fat{w}_d ) = x_d + \delta_d(\fat{x}, \fat{w}_d),
 \quad
 \text{where}
 \quad
-\delta(\fat{x}, \fat{w}_d) =
+\delta_d(\fat{x}, \fat{w}_d) =
 \sum_{m=0}^{M-1} w_{d,m} \phi_m( \fat{x} )
 .
 \label{eq:deformableOneDirection}
@@ -1310,7 +1310,7 @@ y_d( \fat{x}, \fat{w}_d ) = x_d + \delta(\fat{x}, \fat{w}_d),
 Here $\phi_m(\fat{x})$ are $M$ basis functions, which are typically taken to be \emph{separable} (cf.~\eqref{eq:basisFunction2D} and Fig.~\ref{fig:basisFunctions2D_BSpline}),
 with weights $\fat{w}_d = (w_{d,0}, \ldots w_{d,M-1})\transp$.
 %
-The interpretation of these weights is that, when they are all set to zero (i.e., when $\fat{w}_d = \fat{0}$), the deformation $\delta$ is also zero and no deformation is applied.
+The interpretation of these weights is that, when they are all set to zero (i.e., when $\fat{w}_d = \fat{0}$), the deformation $\delta_d$ is also zero and no deformation is applied.
 An illustration of a nonlinear transformation encoded this way is provided in Fig.~\ref{fig:nonlinear}.
 
 %
@@ -1346,7 +1346,7 @@ E( \fat{w} )
 & = & 
 \sum_{n=1}^N 
 \sum_{d=1}^D
-\left[ y_{n,d} - y_d( \fat{x}_n, \fat{w_d} ) \right]^2 
+\left[ y_{n,d} - y_d( \fat{x}_n, \fat{w}_d ) \right]^2 
 \\
 & = & 
 \sum_{d=1}^D E_d( \fat{w}_d )
@@ -1356,14 +1356,14 @@ E( \fat{w} )
 E_d( \fat{w}_d )
 =
 \sum_{n=1}^N 
-\left[ y_{n,d} - y_d( \fat{x}_n, \fat{w_d} ) \right]^2
+\left[ y_{n,d} - y_d( \fat{x}_n, \fat{w}_d ) \right]^2
 ,
 \end{eqnarray*}
 where $y_{n,d}$ denotes the $d$-th element of $\fat{y}_n$.
 %
 Optimizing each $E_d(\fat{w}_d)$ with respect to $\fat{w}_d$ is easy: 
 in both the affine and the nonlinear case, 
-$\fat{y}_d( \fat{x}_n, \fat{w_d} )$ is only \emph{linearly} dependent on $\fat{w}_d$,
+$\fat{y}_d( \fat{x}_n, \fat{w}_d )$ is only \emph{linearly} dependent on $\fat{w}_d$,
 reducing the problem to the form of linear regression analyzed in Sec.~\ref{sec:linearRegression}.
 %
 Taking affine registration as an example, the energy for the $d$-th dimension is given by (cf.~\eqref{eq:affineOneDirection}) 
@@ -1476,7 +1476,7 @@ $$
 \quad
 \text{and}
 \quad
-\sum_{n=1}^N \fat{x}_n \fat{y}_n\transp 
+\sum_{n=1}^N \fat{\tilde{x}}_n \fat{\tilde{y}}_n\transp 
 =
 \fat{U}
 \bldgr{\Sigma}
@@ -1486,7 +1486,7 @@ $$
 where $\bldgr{\Sigma}$ is diagonal.
 %
 One such a solution is obtained by computing the singular value decomposition (SVD) of the matrix 
-$\sum_{n=1}^N \fat{x}_n \fat{y}_n\transp$.
+$\sum_{n=1}^N \fat{\tilde{x}}_n \fat{\tilde{y}}_n\transp$.
 % which yields a $\bldgr{\Sigma}$ with non-negative values on the diagonal. 
 However, this solution does not necessarily satisfy the second constraint of rotational matrices that 
 $\det( \fat{R} ) = 1$. It is also possible\footnote{%
@@ -1693,22 +1693,6 @@ One such a modification is the \emph{Levenberg-Marquardt} algorithm, which repla
 where $\lambda \geq 0$ is a tunable parameter that is typically updated after each iteration. 
 If the parameter update $\bldgr{\epsilon}$ does not decrease $E(\fat{w})$, the update is rejected and $\lambda$ is increased until a decrease in $E(\fat{w})$ is obtained; this will happen eventually because for very large $\lambda$ the algorithm devolves into a gradient-descent algorithm with a small step size.
 Conversely, if $E(\fat{w})$ decreases a smaller $\lambda$ is used in the next iteration of the algorithm to improve efficiency.
-
-
-
-
-\iffalse 
-\begin{equation}
-y_d( \fat{x}, \fat{w}_d ) = x_d + \epsilon(\fat{x}, \fat{w}_d),
-\quad
-\text{where}
-\quad
-\delta(\fat{x}, \fat{w}_d) =
-\sum_{m=0}^{M-1} w_{d,m} \phi_m( \fat{x} )
-.
-\label{eq:deformableOneDirection}
-\end{equation}
-\fi
 
 
 \clearpage
