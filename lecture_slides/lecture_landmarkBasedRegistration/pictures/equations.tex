@@ -53,6 +53,184 @@ $$
 $$
 
 
+% 
+% array([[ -0.89230573,  -0.08025947,  -0.3732689 , 129.28341675],
+%        [ -0.08505171,   0.89213306,   0.35280129, -98.73633575],
+%        [ -0.06121002,  -0.06962017,   4.95120955, -27.69119644],
+%        [  0.        ,   0.        ,   0.        ,   1.        ]])
+% 
+
+$$
+\fat{A} 
+= 
+\left(
+\begin{array}{rrr}
+-0.8923 &  -0.0802 &  -0.3732 \\
+-0.0850 &   0.8921 &   0.3528 \\
+-0.0612 &  -0.0696 &   4.9512
+\end{array}
+\right)
+$$
+
+$$
+\fat{t}
+=
+\left(
+\begin{array}{r}
+129.2834 \\
+-98.7363 \\
+-27.6911
+\end{array}
+\right)
+$$
+
+$$
+\fat{v}
+$$
+
+$$
+\fat{x}
+$$
+
+
+$$
+\left(
+\begin{array}{c}
+x_1 \\
+x_2 \\
+x_3
+\end{array}
+\right)
+= 
+\left(
+\begin{array}{ccc}
+a_{1,1} & a_{1,2} & a_{1,3} \\
+a_{2,1} & a_{2,2} & a_{2,3} \\
+a_{3,1} & a_{3,2} & a_{3,3}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+v_1 \\
+v_2 \\
+v_3
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+t_1 \\
+t_2 \\
+t_3
+\end{array}
+\right)
+$$
+
+
+% $$
+% \left(
+% \underbrace{
+% \begin{array}{c}
+% x_1 \\
+% x_2 \\
+% x_3
+% \end{array}
+% }_{\fat{x}}
+% \right)
+% = 
+% \underbrace{
+% \left(
+% \begin{array}{ccc}
+% a_{1,1} & a_{1,2} & a_{1,3} \\
+% a_{2,1} & a_{2,2} & a_{2,3} \\
+% a_{3,1} & a_{3,2} & a_{3,3}
+% \end{array}
+% \right)
+% }_{\fat{A}}
+% \underbrace{
+% \left(
+% \begin{array}{c}
+% v_1 \\
+% v_2 \\
+% v_3
+% \end{array}
+% \right)
+% }_{\fat{v}}
+% +
+% \underbrace{
+% \left(
+% \begin{array}{c}
+% t_1 \\
+% t_2 \\
+% t_3
+% \end{array}
+% \right)
+% }_{\fat{t}}
+% $$
+
+$$
+\left(
+\begin{array}{c}
+\fat{v}_{2} \\
+1 
+\end{array}
+\right)
+=
+\fat{M}_{2}^{-1}
+\cdot
+\fat{M}_{1}
+\cdot
+\left(
+\begin{array}{c}
+\fat{v}_{1} \\
+1 
+\end{array}
+\right)
+$$
+
+$$
+\fat{v}_1
+$$
+
+$$
+\fat{v}_2
+$$
+
+$$
+\fat{M}_{2}^{-1}
+$$
+
+$$
+\fat{M}_{1}
+$$
+
+
+$$
+E(\fat{w}) 
+=
+\sum_{n=1}^N \| \fat{y}_n - \fat{A} \fat{x}_n - \fat{t} \|^2
+$$
+
+% $$
+% =
+% \sum_{n=1}^N \sum_{d}^D ( y_{n,d} - t_n - \sum_{m=1}^D x_{n,m} a_{d,m} )^2
+% $$
+
+$$
+=
+\sum_{n=1}^N \sum_{d}^D ( y_{n,d} - t_n - \sum_{d'=1}^D x_{n,d'} a_{d,d'} )^2
+$$
+
+$$
+=
+\sum_{d}^D \sum_{n=1}^N ( y_{n,d} - t_n - \sum_{d'=1}^D x_{n,d'} a_{d,d'} )^2
+$$
+
+
+$$
+\fat{A} = \fat{t}
+$$
+
 \end{document}
 
 
