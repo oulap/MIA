@@ -1,0 +1,59 @@
+% \documentclass[fontsize=9pt,paper=letter,pagesize]{scrartcl} 
+\documentclass[10pt,twoside]{book}
+
+% Math notation stuff
+\newcommand{\bldgr}[1]{{\mbox{\boldmath {${#1}$}}}} % Bold for lower-case Greek letters
+\newcommand{\fat}[1]{\mathbf{#1}} % Bold for anything else
+%\newcommand{\transp}{^\textrm{\small T}} % Transpose
+\newcommand{\transp}{^T} % Transpose
+
+
+\begin{document}
+
+$$
+\fat{R}
+=
+\left(
+\begin{array}{cc}
+r_{1,1} & r_{1,2} \\
+r_{2,1} & r_{2,2}
+\end{array}
+\right)
+$$
+
+$$
+\fat{R}\transp \fat{R}
+=
+\left(
+\begin{array}{cc}
+1 & 0 \\
+0 & 1
+\end{array}
+\right)
+$$
+
+$$
+\fat{r}_1\transp \fat{r}_2 = 0
+$$
+
+$$
+\fat{r}_1\transp \fat{r}_1 = \| \fat{r}_1 \|^2 = 1
+$$
+
+$$
+\fat{r}_2\transp \fat{r}_2 = \| \fat{r}_2 \|^2 = 1
+$$
+
+$$
+\| \fat{r}_1 \| = \sqrt{ \fat{r}_1\transp \fat{r}_1 } = 1
+$$
+
+$$
+\| \fat{r}_2 \| = \sqrt{ \fat{r}_2\transp \fat{r}_2 } = 1
+$$
+
+
+\end{document}
+
+
+
