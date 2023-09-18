@@ -25,16 +25,25 @@ def saveFigure( fig, fileName, useFullScreen=False ):
 X1, X2 = np.meshgrid( np.linspace( 0, 20, 21 ), np.linspace( 0, 20, 21 ), indexing='ij' )
 
 #
-exampleNames = [ 'translation_onlyDirection1', 'translation', 'translationAndScaling', 'fullyAffine' ] 
+exampleNames = [ 'translation_onlyDirection1', 
+                 'translation', 
+                 'translationAndScaling_onlyDirection1',
+                 'everything_onlyDirection1',
+                 'translationAndScaling',
+                 'fullyAffine' ] 
 for i, exampleName in enumerate( exampleNames ):
     if i == 0:
         A, t  = np.eye( 2 ), np.array( [ 23, 0 ] ).reshape( -1, 1 )
     elif i == 1:
-        A, t  = np.eye( 2 ), np.array( [ 23, 16 ] ).reshape( -1, 1 )
+        A, t  = np.eye( 2 ), np.array( [ 23, 6 ] ).reshape( -1, 1 )
     elif i == 2:
-        A, t = np.array( [ [ 1.5, 0 ], [ 0, 0.7 ] ] ), np.array( [ 23, 16 ] ).reshape( -1, 1 )
+        A, t  = np.array( [ [ 1.4, 0 ], [ 0, 1 ] ] ), np.array( [ 23, 0 ] ).reshape( -1, 1 )
+    elif i == 3:
+        A, t  = np.array( [ [ 1.4, 0.5 ], [ 0, 1 ] ] ), np.array( [ 23, 0 ] ).reshape( -1, 1 )
+    elif i == 4:
+        A, t = np.array( [ [ 1.5, 0 ], [ 0, 0.7 ] ] ), np.array( [ 23, 6 ] ).reshape( -1, 1 )
     else:
-        A, t  = np.array( [ [ 1.4, 0.5 ], [ 0.2, 0.9 ] ] ), np.array( [ 23, 2 ] ).reshape( -1, 1 )
+        A, t  = np.array( [ [ 1.4, 0.5 ], [ 0.2, 0.9 ] ] ), np.array( [ 23, 6 ] ).reshape( -1, 1 )
 
     fig, ax = plt.subplots()
     plot_grid( ax, X1, X2, color='b' )
@@ -51,6 +60,7 @@ for i, exampleName in enumerate( exampleNames ):
     xxx = ax.text( t[0], t[1]-6, r"$\mathbf{A} = \left( \begin{array}{cc}" +str1 +r"\\" +str2 +r"\end{array}\right), \,\, \mathbf{t}=\left(\begin{array}{c}" +str3 + r"\\" +str4 + r"\end{array}\right)$", size=18 )
 
     ax.set_aspect( 'equal' )
+    ax.set( xlim=[-1,65], ylim=[-10,30] )
     ax.axis( 'off' )
     fig.tight_layout()
     saveFigure( fig, exampleName + ".png" )
