@@ -57,17 +57,19 @@ colors = [ 'orange', 'blue', 'green', 'yellow' ]
 fig1, ax1 = plt.subplots()
 ax1.imshow( im1, cmap="gray" )
 ax1.axis( False )
+fig1.tight_layout()
+saveFigure( fig1, "im1_noLandmarks.png" )
 for n, point in enumerate( points1 ):
     s = ax1.scatter( point[ 1 ], point[ 0 ], c=colors[ n ] )
-fig1.tight_layout()
 saveFigure( fig1, "im1_landmarks.png" )
 
 fig2, ax2 = plt.subplots()
 ax2.imshow( im2, cmap="gray" )
 ax2.axis( False )
+fig2.tight_layout()
+saveFigure( fig2, "im2_noLandmarks.png" )
 for n, point in enumerate( points2 ):
     s = ax2.scatter( point[ 1 ], point[ 0 ], c=colors[ n ] )
-fig2.tight_layout()
 saveFigure( fig2, "im2_landmarks.png" )
 
     
@@ -96,9 +98,10 @@ mappedPoints2 = ( im2to1[ :2, :2 ] @ points2.T + im2to1[ :2, -1 ].reshape( -1, 1
 fig3, ax3 = plt.subplots()
 ax3.imshow( resampledIm2, cmap="gray" )
 ax3.axis( False )
+fig3.tight_layout()
+saveFigure( fig3, "resampledIm2_noLandmarks.png" )
 for n, point in enumerate( mappedPoints2 ):
     s = ax3.scatter( point[ 1 ], point[ 0 ], c=colors[ n ] )
-fig3.tight_layout()
 saveFigure( fig3, "resampledIm2_landmarks.png" )
 
 
