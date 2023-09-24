@@ -80,7 +80,8 @@ scenarios = [ Scenario( 'MR_MR_ssd', MR, MRnoisy, 'ssd' ),
               Scenario( 'MR_MRscaled', MR, MRnoisyAndRescaled, None ),
               Scenario( 'MR_CT_3bins', binnedMR, binnedCT, 'entropy' ),
               Scenario( 'MR_CT_entropy', MR, CT, 'entropy' ),
-              Scenario( 'MR_CT_mi', MR, CT, 'mi' ) ]
+              Scenario( 'MR_CT_mi', MR, CT, 'mi' ) 
+              ]
 
 columnNumber = 200
 gap = 30
@@ -123,7 +124,11 @@ for scenario in scenarios:
         axI.set_xlim( [0, 256*2-1 + gap ] )
         axI.set_ylim( [0, 255] )
         axI.imshow( fixed, cmap='gray', extent=[0,255,0,255] )
-        axI.imshow( resampledMoving, cmap='gray', extent=[256+gap,256+gap+255, 0, 255] )
+        if name == 'MR_MRscaled':
+            axI.imshow( resampledMoving, cmap='gray', extent=[256+gap,256+gap+255, 0, 255],
+                        vmin=fixed.min(), vmax=fixed.max() )
+        else:
+            axI.imshow( resampledMoving, cmap='gray', extent=[256+gap,256+gap+255, 0, 255] )
         axI.axis( False )
         if saveFigures: saveFigure( figI, fileNameBase + "_images.png" )
         l = axI.plot( [ columnNumber ]*2, [ 0, 255 ], 'b' )
