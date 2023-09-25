@@ -23,7 +23,8 @@ ax.plot( alphas,
        )
 ax.grid()
 ax.set_xlabel( r"$\alpha$", fontsize=20 )
-ax.set_xticks( np.arange( 0, 1, .1 ) )
+ax.set_xticks( np.arange( 0, 1.1, .1 ) )
+ax.set_xlim( 0, 1 )
 ax.set_ylim( 0, 1 )
 
 fig.tight_layout()
