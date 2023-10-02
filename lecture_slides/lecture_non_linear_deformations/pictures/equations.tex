@@ -1,0 +1,201 @@
+% \documentclass[fontsize=9pt,paper=letter,pagesize]{scrartcl} 
+\documentclass[10pt,twoside]{book}
+
+% Math notation stuff
+\newcommand{\bldgr}[1]{{\mbox{\boldmath {${#1}$}}}} % Bold for lower-case Greek letters
+\newcommand{\fat}[1]{\mathbf{#1}} % Bold for anything else
+%\newcommand{\transp}{^\textrm{\small T}} % Transpose
+\newcommand{\transp}{^T} % Transpose
+
+
+\begin{document}
+
+$$
+\fat{y}( \fat{x}, \fat{w} )
+= \fat{x} + \bldgr{\delta}( \fat{x}, \fat{w} )
+$$
+
+$$
+t
+$$
+
+$$
+y( x, t ) = x + t
+$$
+
+$$
+E( t )
+=
+\sum_{n=1}^N
+E_n( t ) 
+$$
+
+$$
+E_n( t )
+=
+\left[ 
+\mathcal{F}( x_n ) - \mathcal{M}( y( x_n, t ) )
+\right]^2
+$$
+
+$$
+E( t )
+=
+\sum_{n=1}^N
+\left[ 
+\mathcal{F}( x ) - \mathcal{M}( y( x_n, t ) )
+\right]^2
+$$
+
+$$
+\epsilon
+$$
+
+$$
+\mathcal{M}( y( x_n, t+\epsilon ) ) 
+\,\,
+\simeq
+\,\,
+\mathcal{M}( y( x_n, t ) ) 
++ 
+g_n \cdot \epsilon
+$$
+
+$$
+g_n 
+= 
+\frac{\mathrm{d} \mathcal{M}( y( x_n, t ) ) }{\mathrm{d} y}
+$$
+
+$$
+g_n 
+= 
+\frac{\mathrm{d} \mathcal{M}( y )}{\mathrm{d} y} \bigg|_{y=x_n+t}
+$$
+
+$$
+E_n( t + \epsilon )
+\,\,
+=
+\,\,
+\left[ 
+\mathcal{F}( x_n ) - \mathcal{M}( y( x_n, t + \epsilon ) )
+\right]^2
+$$
+
+$$
+\simeq
+\,\,
+\left[ 
+\mathcal{F}( x_n ) - \mathcal{M}( y( x_n, t ) ) - g_n \cdot \epsilon
+\right]^2
+$$
+
+$$
+E( t + \epsilon )
+=
+\sum_{n=1}^N
+E_n( t + \epsilon ) 
+$$
+
+$$
+\tau_n = \mathcal{F}( x_n ) - \mathcal{M}( y( x_n, t ) )
+$$
+
+$$
+\epsilon = ( \bldgr{\psi}^T \bldgr{\psi} )^{-1} \bldgr{\psi}^T \bldgr{\tau}
+$$
+
+$$
+\bldgr{\psi} = ( g_1, \ldots, g_N )^T
+$$
+
+$$
+\bldgr{\psi} 
+= 
+\left(
+\begin{array}{c}
+g_1 \\
+\vdots \\
+g_N
+\end{array}
+\right)
+= 
+%\mathrm{diag}( g_1, \ldots, g_N )
+\left(
+\begin{array}{ccc}
+g_1 & & \\
+& \ddots & \\
+& & g_N
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+1 \\
+\vdots \\
+1
+\end{array}
+\right)
+$$
+
+$$
+\underbrace{
+\begin{array}{ccc}
+\phantom{g_1} & \phantom{\cdots} & \phantom{g_N}
+\end{array}
+}_{\fat{G}}}
+$$
+
+$$
+\bldgr{\tau} 
+= 
+\left(
+\begin{array}{c}
+\tau_1 \\
+\vdots \\
+\tau_N
+\end{array}
+\right)
+$$
+
+$$
+\bldgr{\tau} 
+= 
+\left(
+\begin{array}{c}
+\mathcal{F}( x_1 ) - \mathcal{M}( y( x_1, t ) ) \\
+\vdots \\
+\mathcal{F}( x_N ) - \mathcal{M}( y( x_N, t ) )
+\end{array}
+\right)
+$$
+
+$$
+D > 1
+$$
+
+$$
+M > 1
+$$
+
+$$
+t 
+\,\,
+\gets 
+\,\,
+t + \epsilon
+$$
+
+$$
+\delta_1(\fat{x}, \fat{w}_1)
+$$
+
+$$
+\delta_2(\fat{x}, \fat{w}_2)
+$$
+
+
+\end{document}
+
+
+
