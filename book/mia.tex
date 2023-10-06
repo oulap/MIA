@@ -1980,10 +1980,18 @@ where $V_k( \fat{l} )$ counts the number of voxels that have label $k$ in $\fat{
 \label{sec:GMM}
 
 A very simple generative model that is nevertheless quite useful in practice, is the so-called \emph{Gaussian mixture model}. In this model, the segmentation prior is of the form
-\begin{eqnarray}
- p( \fat{l} | \bldgr{\theta}_l ) & = & \prod_{n=1}^N p( l_n | \bldgr{\theta}_l ) \label{eq:priorFactorization} \\
-                                 & = & \prod_{n=1}^N \pi_{l_n} \label{eq:priorFrequency}
-\end{eqnarray}
+\begin{equation}
+  p( \fat{l} | \bldgr{\theta}_l ) 
+  =  
+  \prod_{n=1}^N p( l_n | \bldgr{\theta}_l )
+  \label{eq:priorFactorization}
+\end{equation}
+with
+\begin{equation}
+  p( l=k | \bldgr{\theta}_l ) = \pi_k
+  ,
+  \label{eq:priorFrequency}
+\end{equation}
 where the parameters $\bldgr{\theta}_l = ( \pi_1, \ldots, \pi_K )\transp$ consist of a set of probabilities $\pi_k$ satisfying $\pi_k \geq 0, \forall k$ and $\sum_{k=1}^K \pi_k = 1$. In other words, this model assumes that the labels are assigned to the voxels independently from one another, i.e., the probability that a certain label occurs in a particular voxel is unaffected by the labels assigned to other voxels (\eqref{eq:priorFactorization}), and each label occurs, on average, with a relative frequency of $\pi_k$ (\eqref{eq:priorFrequency}).
 
 For the likelihood function, it is assumed that the intensity in each voxel only depends on the label in that voxel and not on that in other voxels:
@@ -1994,7 +2002,7 @@ For the likelihood function, it is assumed that the intensity in each voxel only
 and that the intensity distribution associated with each label $k$ is Gaussian with mean $\mu_k$ and variance $\sigma_k^2$:
 \begin{equation}
   %p( d_n | l_n, \bldgr{\theta}_d ) = \frac{1}{\sqrt{ 2 \pi \sigma_{l_n}^2}} \exp\big[ -\frac{ ( d_n - \mu_{l_n})^2}{ 2 \sigma_{l_n}^2} \big]
-  p( d_n | l_n, \bldgr{\theta}_d ) = \N( d_n | \mu_{l_n}, \sigma_{l_n}^2 ),
+  p( d | l=k, \bldgr{\theta}_d ) = \N( d | \mu_k, \sigma_k^2 ),
   \label{eq:Gauss}
 \end{equation}
 where 
@@ -2044,12 +2052,12 @@ Because of the assumption of statistical independence between voxels, the segmen
 \end{eqnarray}
 where 
 \begin{equation}
-  p( l_n | d_n, \bldgr{\hat{\theta}} ) = \frac{ \N( d_n | \hat{\mu}_{l_n}, \hat{\sigma}_{l_n}^2 ) \hat{\pi}_{l_n} }%
-                                              { \sum_{k=1}^K \N( d_n | \hat{\mu}_k, \hat{\sigma}_k^2 ) \hat{\pi}_k }.
+  p( l=k | d, \bldgr{\hat{\theta}} ) = \frac{ \N( d | \hat{\mu}_k, \hat{\sigma}_k^2 ) \hat{\pi}_k }%
+                                              { \sum_{k'=1}^K \N( d | \hat{\mu}_{k'}, \hat{\sigma}_{k'}^2 ) \hat{\pi}_{k'} }.
   \label{eq:GMMposterior}
 \end{equation}
 Therefore, the segmentation posterior is fully specified by each voxel's $K$ posterior probabilities of belonging to each structure; such segmentation posteriors can be visualized as images where high and low intensities correspond to high and low probabilities, respectively. The segmentation corresponding to the image and Gaussian mixture model of Fig.~\ref{fig:GMM} is visualized in~\ref{fig:GMMSegmentation} this way. 
-Evidently, the sum of all the structures' posterior probabilities add to one in each voxel: $\sum_{k=1}^K p( k | d_n, \bldgr{\hat{\theta}} ) = 1, \forall n$. 
+Evidently, the sum of all the structures' posterior probabilities add to one in each voxel: $\sum_{k=1}^K p( l_n=k | d_n, \bldgr{\hat{\theta}} ) = 1, \forall n$. 
 
 \begin{figure}
   \centering
@@ -2126,9 +2134,9 @@ The computational attractiveness of the model lies in the fact that, although it
   p( l_n | \fat{l}_{\setminus n} ) & = & \frac{ p( \fat{l} ) }{ p( \fat{l}_{\setminus n} ) } \nonumber\\
                                    & = & \frac{ p( \fat{l} ) }{ \sum_{l_n} p( \fat{l} ) } \nonumber\\
                                    & = & \frac{ \exp( -U(\fat{l} | \bldgr{\theta}_l) ) }{ \sum_{l_n} \exp( -U(\fat{l} | \bldgr{\theta}_l) ) }  \nonumber\\
-                                   & = & \frac{ \exp\big( -\beta \sum_{{n'} \in \mathfrak{N}_n} \delta( l_n \neq l_{n'} ) +\log\pi_{l_n} \big) }%
+                                   & = & \frac{ \exp\big( -\beta \sum_{{n'} \in \mathfrak{N}_n} \delta( l_{n'} \neq l_n ) +\log\pi_{l_n} \big) }%
                                               { \sum_{k=1}^K \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} \delta( l_{n'} \neq k ) +\log\pi_k \big)} \nonumber\\
-                                   & = & \frac{ \pi_{l_n} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} \delta( l_n \neq l_{n'} ) \big) }%
+                                   & = & \frac{ \pi_{l_n} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} \delta( l_{n'} \neq l_n ) \big) }%
                                               { \sum_{k=1}^K \pi_k \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} \delta( l_{n'} \neq k ) \big)}.
   \label{eq:MRFconditional}                                
 \end{eqnarray}
@@ -2162,24 +2170,24 @@ The solution is to resort to approximation schemes, of which one is a variationa
   q( \fat{l} ) = \prod_{n=1}^N q_n( l_n ).
   \label{eq:factorized}
 \end{equation}
-Within this family, our task is to chose the voxel-wise distributions $q_n(k)$ in such a way that the resulting joint distribution $q(\fat{l})$ approximates $p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}})$ as accurately as possible. For this purpose, we minimize the so-called Kullback-Leibler (KL) divergence
+Within this family, our task is to chose the voxel-wise distributions $q_n(\cdot)$ in such a way that the resulting joint distribution $q(\fat{l})$ approximates $p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}})$ as accurately as possible. For this purpose, we minimize the so-called Kullback-Leibler (KL) divergence
 \begin{equation}
   {KL}\left( \, q( \fat{l} ) \, || \, p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}}) \, \right) = - \sum_{\fat{l}} q( \fat{l} ) \log \frac{ p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}}) }{ q( \fat{l} ) },
   \label{eq:KL}
 \end{equation}
 which measures how different $q( \fat{l} )$ is from $p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}})$: it is always positive, and zero only if our approximation $q( \fat{l} )$ equals the true posterior $p(\fat{l} | \fat{d}, \bldgr{\hat{\theta}})$ exactly (which will typically be unattainable because we restrict the form of $q( \fat{l} )$ to \eqref{eq:factorized}).
 
-For a given set of distributions $q_{n'}( l_{n'} )$ in all voxels $n' \neq n$, it can be shown~\cite{Jaakkola} that the remaining voxel's distribution $q_n( l_n )$ that minimizes the KL-divergence is given by
+For a given set of distributions $q_{n'}( \cdot )$ in all voxels $n' \neq n$, it can be shown~\cite{Jaakkola} that the remaining voxel's distribution $q_n( \cdot )$ that minimizes the KL-divergence is given by
 \begin{equation}
-  q_n( l_n ) = \frac{ \N( d_n | \hat{\mu}_{l_n}, \hat{\sigma}_{l_n}^2 ) \gamma_n(l_n) }%
-                                              { \sum_{k=1}^K \N( d_n | \hat{\mu}_k, \hat{\sigma}_k^2 ) \gamma_n( k ) }
+  q_n( l_n=k ) = \frac{ \N( d_n | \hat{\mu}_k, \hat{\sigma}_k^2 ) \gamma_n(l_n=k) }%
+                                              { \sum_{k'=1}^K \N( d_n | \hat{\mu}_{k'}, \hat{\sigma}_{k'}^2 ) \gamma_n( l_n=k' ) }
   \label{eq:meanfield}
 \end{equation}
 with
 \begin{equation}
-  \gamma_n(k) = 
-  \frac{ \hat{\pi}_{k} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} ( 1 - q_{n'}( k ) ) \big) }%
-       { \sum_{k'=1}^K \hat{\pi}_{k'} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} ( 1 - q_{n'}( k' ) ) \big) }.
+  \gamma_n( l_n = k) = 
+  \frac{ \hat{\pi}_{k} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} ( 1 - q_{n'}( l_{n'} = k ) ) \big) }%
+       { \sum_{k'=1}^K \hat{\pi}_{k'} \cdot \exp\big( -\beta \sum_{n' \in \mathfrak{N}_n} ( 1 - q_{n'}( l_{n'} = k' ) ) \big) }.
   \label{eq:meanfieldPrior}
 \end{equation}
 Comparing this with the voxel-wise posterior of the standard Gaussian mixture model \eqref{eq:GMMposterior}, it can be seen that the usual class priors $\pi_k$ are replaced with altered priors $\gamma_n(k)$ that take the local neighborhood of the voxels into account: as in \eqref{eq:MRFconditional}, the number of neighboring voxels ``assigned'' to a different class is ``counted'' (in a soft, weighted sense) and alters $\pi_k$ accordingly.
