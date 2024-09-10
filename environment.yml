@@ -3,12 +3,15 @@ channels:
 - defaults
 - conda-forge
 dependencies:
-- python
+- python=3.9
 - numpy
 - scipy
 - matplotlib
 - nibabel
 - jupyter
 - ipykernel
-- nbconvert[webpdf]
+- ipympl
 - pyppeteer
+- pip:
+    - nbconvert[webpdf]
+    - nbconvert[qtpdf]
