@@ -44,6 +44,13 @@
 \vspace*{\fill}
 
 \newpage
+
+\vspace*{\fill}
+\noindent
+\copyright \ This work is licensed under CC BY 4.0
+% \vspace*{\fill}
+
+
 \thispagestyle{empty}
 
 
@@ -683,7 +690,7 @@ $$
 \fat{C} = \bldgr{\Phi}_1\transp \fat{T} \bldgr{\Phi}_2,
 $$
 where $\fat{C}$ is a $M_1 \times M_2$ matrix such that $\mathrm{vec}( \fat{C} ) = \fat{c}$.
-Similarly, it can be shown that $\bldgr{\Phi} \fat{w}$ can be more efficiently computed as $\bldgr{\Phi}_x \fat{W} \bldgr{\Phi}_y\transp$, with $\mathrm{vec}( \fat{W} ) = \fat{w}$.
+Similarly, it can be shown that $\bldgr{\Phi} \fat{w}$ can be more efficiently computed as $\bldgr{\Phi}_1 \fat{W} \bldgr{\Phi}_2\transp$, with $\mathrm{vec}( \fat{W} ) = \fat{w}$.
 Therefore, the solution~\eqref{eq:coefficients}, which can be written as
 $$
 \bldgr{\Phi}\transp 
@@ -1491,7 +1498,7 @@ $\sum_{n=1}^N \fat{\tilde{x}}_n \fat{\tilde{y}}_n\transp$.
 However, this solution does not necessarily satisfy the second constraint of rotational matrices that 
 $\det( \fat{R} ) = 1$. It is also possible\footnote{%
 Since $\det(\fat{A} \fat{B}) = \det(\fat{A}) \det(\fat{B})$,
-we have that $\det(R) = \det(U) \det(V)$.
+we have that $\det(\fat{R}) = \det(\fat{U}) \det(\fat{V})$.
 Furthermore,
 $\det(\fat{U}) \pm 1$ and $\det(\fat{V}) \pm 1$ since $\fat{U}\transp \fat{U} = \fat{I}$ and $\fat{V}\transp \fat{V} = \fat{I}$.
 }
@@ -3975,12 +3982,15 @@ The absolute values of all the specificity estimates are high because of the she
 
 
 \backmatter
+\clearpage
 
-\chaptermark{Bibliography}
-\renewcommand{\sectionmark}[1]{\markright{#1}}
-\sectionmark{Bibliography}
+% \chaptermark{Bibliography}
+% \renewcommand{\sectionmark}[1]{\markright{#1}}
+% \sectionmark{Bibliography}
 
-
+\addcontentsline{toc}{chapter}{Bibliography}
+% \sectionmark{References}
+% \renewcommand{\sectionmark}[1]{\markright{#1}}
 \bibliographystyle{ieeetr}
 \bibliography{mia}
 
