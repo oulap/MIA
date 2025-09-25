@@ -1,117 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="MIA: Medical Image Analysis">
-    <meta name="authors" content="Oula Puonti, Koen Van Leemput">
-    <meta name="keywords" content="Image Registration, Deformation, Interpolation, Segmentation, Neuroimaging, Biomedical Imaging, MRI">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="MIA: Medical Image Analysis">
+        <meta name="authors" content="Oula Puonti, Koen Van Leemput">
+        <meta name="keywords" content="Image Registration, Deformation, Interpolation, Segmentation, Neuroimaging, Biomedical Imaging, MRI">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDT3X14ECB"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-QDT3X14ECB');
-    </script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDT3X14ECB"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QDT3X14ECB');
+        </script>
 
-    <title>Medical Image Analysis</title>
+        <title>Medical Image Analysis</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link href="./lecture_slides/stylesheet/bootstrap.min.css" rel="stylesheet">
-    <link href="./lecture_slides/stylesheet/fontawesome-all.min.css" rel="stylesheet">
-    <link href="./lecture_slides/stylesheet/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+        <link href="./lecture_slides/stylesheet/bootstrap.min.css" rel="stylesheet">
+        <link href="./lecture_slides/stylesheet/fontawesome-all.min.css" rel="stylesheet">
+        <link href="./lecture_slides/stylesheet/styles.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
 
-<body>
-<main role="main" class="container">
+    <body>
+        <main role="main" class="container">
 
-<h1 class="mt-5" style="text-align: center;">Medical Image Analysis</h1>
-<p style="line-height: 1.2em; margin-bottom: 0; padding-top: 0;text-align: center"><b>Lecturers:</b> Prof. Axel Thielscher (axthi at dtu.dk), Oula Puonti (oupu at dtu.dk)</p>
-<p style="line-height: 1.2em; margin-bottom: 0; padding-top: 0;text-align: center"><b>Teaching assistant:</b> Saverio Procopio (s240099 at dtu.dk)</p>
-
-
-<div style="text-align: center;" class="mt-4">
-<a href="https://github.com/oulap/MIA"><i class="fa fa-github" style='font-size:40px;color:black;'></i></a>
-</div>
-
-<h3 class="mt-5">Course information</h3>
-<p>See information about the syllabus and schedule <a href="https://kurser.dtu.dk/course/22525" class="link-button">here.</a></p>
-<p>Instructions on how to setup the python environment to run the exercises can be found on the <a href="https://github.com/oulap/MIA?tab=readme-ov-file#exercise-guide" class="link-button">github page</a>of the course.</p>
-
-<h3 class="mt-5">Lecture note, slides and exercises</h3>
-
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture note</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./book/mia.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Lecture note</a>
-</div>
-</div>
+        <h1 class="mt-5" style="text-align: center;">Medical Image Analysis</h1>
+        <p style="line-height: 1.2em; margin-bottom: 0; padding-top: 0;text-align: center"><b>Lecturers:</b> Prof. Axel Thielscher (axthi at dtu.dk), Oula Puonti (oupu at dtu.dk)</p>
+        <p style="line-height: 1.2em; margin-bottom: 0; padding-top: 0;text-align: center"><b>Teaching assistant:</b> Saverio Procopio (s240099 at dtu.dk)</p>
 
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Introduction</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_introduction_dtu/22525_Intro_Lecture_2025.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-</div>
-</div>
+        <div style="text-align: center;" class="mt-4">
+            <a href="https://github.com/oulap/MIA"><i class="fa fa-github" style='font-size:40px;color:black;'></i></a>
+        </div>
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Smoothing and Interpolation</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_smoothingAndInterpolation/lecture_smoothingAndInterpolation.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-</div>
-</div>
+        <h3 class="mt-5">Course information</h3>
+        <p>See information about the syllabus and schedule <a href="https://kurser.dtu.dk/course/22525" class="link-button">here.</a></p>
+        <p>Instructions on how to setup the python environment to run the exercises can be found on the <a href="https://github.com/oulap/MIA?tab=readme-ov-file#exercise-guide" class="link-button">github page</a>of the course.</p>
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Landmark-based Registration</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_landmarkBasedRegistration/lecture_landmarkBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-</div>
-</div>
+        <h3 class="mt-5">Lecture note and slides</h3>
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Intensity-based registration</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_intensity_based_registration/lecture_intensityBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-    <!-- <a href="https://github.com/oulap/MIA/blob/main/exercises/exercise3/exercise3.ipynb" class="link-button">Exercise</a> -->
-</div>
-</div>
+        <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture note</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./book/mia.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Lecture note</a>
+            </div>
+        </div>
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Non-linear registration</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_non_linear_deformations/lecture_nonlinearRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-    <!-- <a href="https://github.com/oulap/MIA/blob/main/exercises/exercise4/exercise4.ipynb" class="link-button">Exercise</a> -->
-</div>
-</div>
+<!-- 
+        <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Introduction</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_introduction_dtu/22525_Intro_Lecture_2025.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+            </div>
+        </div> -->
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Model-based segmentation part 1</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/lecture_modelBasedSegmentationI.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-    <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/refresher_on_probability.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides (Refresher on Probability)</a>
-    <!-- <a href="https://github.com/oulap/MIA/blob/main/exercises/exercise5/exercise5.ipynb" class="link-button">Exercise</a> -->
-</div>
-</div>
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Smoothing and Interpolation</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_smoothingAndInterpolation/lecture_smoothingAndInterpolation.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+            </div>
+        </div> -->
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Model-based segmentation part 2</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_generative_models_for_segmentation_2/lecture_modelBasedSegmentationII.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-    <!-- <a href="https://github.com/oulap/MIA/blob/main/exercises/exercise5/exercise5.ipynb" class="link-button">Exercise</a> -->
-</div>
-</div>
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Landmark-based Registration</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_landmarkBasedRegistration/lecture_landmarkBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+            </div>
+        </div> -->
 
-<div class="paper">
-<p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Neural nets</b></p>
-<div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
-    <a href="./lecture_slides/lecture_neural_nets/lecture_neuralNets.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
-    <!-- <a href="./" class="link-button">Exercise</a> -->
-</div>
-</div>
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Intensity-based registration</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Slides</th>
+                            <th>Lecture note chapter</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_intensity_based_registration/lecture_intensityBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+                            </td>
+                            <td>Chapter 2.4 (Skip Gauss-Newton optimization)</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        </div> -->
 
-</main>
-</body>
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Non-linear registration</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Slides</th>
+                            <th>Lecture note chapter</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_non_linear_deformations/lecture_nonlinearRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+                            </td>
+                            <td>Chapter 2.4 (Gauss-Newton optimization)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> -->
+
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Model-based segmentation part 1</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/lecture_modelBasedSegmentationI.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+                <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/refresher_on_probability.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides (Refresher on Probability)</a>
+            </div>
+        </div> -->
+
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Model-based segmentation part 2</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_generative_models_for_segmentation_2/lecture_modelBasedSegmentationII.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+            </div>
+        </div> -->
+
+        <!-- <div class="paper">
+            <p style="margin-bottom: 0; line-height: 1.5;"><b>Lecture: Neural nets</b></p>
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <a href="./lecture_slides/lecture_neural_nets/lecture_neuralNets.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Slides</a>
+            </div>
+        </div> -->
+
+        <div class="paper">
+            <!-- <p style="margin-bottom: 0; line-height: 1.5;"><b>Slides and lecture note references</b></p> -->
+            <div style="margin-bottom: 0; padding-top: 0; line-height: 1.5;">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Slides</th>
+                            <th>Lecture note chapters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_introduction_dtu/22525_Intro_Lecture_2025.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Introduction</a>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_smoothingAndInterpolation/lecture_smoothingAndInterpolation.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Smoothing and Interpolation</a>
+                            </td>
+                            <td>Chapter 1</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_landmarkBasedRegistration/lecture_landmarkBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Landmark-based Registration</a>
+                            </td>
+                            <td>
+                                Chapter 2:
+                                <ul>
+                                    <li>section 2.1</li>
+                                    <li>section 2.2</li>
+                                    <li>section 2.3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_intensity_based_registration/lecture_intensityBasedRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Intensity-based Registration</a>
+                            </td>
+                            <td>Chapter 2:
+                                <ul>
+                                    <li>section 2.4 (Skip Gauss-Newton optimization)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_non_linear_deformations/lecture_nonlinearRegistration.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Non-linear Registration</a>
+                            </td>
+                            <td>
+                                Chapter 2:
+                                <ul>
+                                    <li>section 2.2.2</li>
+                                    <li>section 2.4 (Gauss-Newton optimization)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/refresher_on_probability.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Refresher on Probability</a>
+                                <br>
+                                <a href="./lecture_slides/lecture_generative_models_for_segmentation_1/lecture_modelBasedSegmentationI.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Model-based Segmentation I</a>
+                            </td>
+                            <td>Chapter 3:
+                                <ul>
+                                    <li>section 3.1</li>
+                                    <li>section 3.2</li>
+                                    <li>section 3.3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_generative_models_for_segmentation_2/lecture_modelBasedSegmentationII.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Model-based Segmentation II</a>
+                            </td>
+                            <td>Chapter 3:
+                                <ul>
+                                    <li>section 3.4</li>
+                                    <li>section 3.5</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="./lecture_slides/lecture_neural_nets/lecture_neuralNets.pdf" target="_blank" rel="noopener noreferrer" class="link-button">Neural nets</a>
+                            </td>
+                            <td>Chapter 4</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        </main>
+    </body>
 </html>
